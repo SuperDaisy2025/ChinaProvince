@@ -1,0 +1,17 @@
+{
+  "name": "中国の省 – 発音学習",
+  "short_name": "中国省",
+  "description": "中国の省・直轄市・自治区の名前を中国語で学べるアプリ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf8f3",
+  "theme_color": "#c0392b",
+  "lang": "ja",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "categories": ["education", "language"]
+}
