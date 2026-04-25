@@ -7,7 +7,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="中国省">
   <meta name="theme-color" content="#c0392b">
-  <meta name="description" content="中国の省・直轄市・自治区の名前を中国語で学べるアプリ">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <title>中国の省 – 発音学習</title>
@@ -74,27 +73,45 @@
     /* DETAIL */
     #detail-view { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; }
 
-    .map-area { background:var(--bg2); padding:12px 12px 8px; display:flex; gap:10px; align-items:flex-start; }
-    .china-map-wrap { flex:1; min-width:0; }
-    #china-map { width:100%; height:auto; border-radius:8px; display:block; }
-    .shape-wrap { width:95px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:4px; }
-    #province-shape { width:100%; height:auto; border:1px solid var(--border); border-radius:8px; background:var(--card); display:block; }
-    .map-lbl { font-size:13px; color:var(--text3); text-align:center; margin-top:2px; }
+    /* ── 地図エリア：画像の上にSVGドットを重ねる ── */
+    .map-area {
+      background:var(--bg2);
+      padding:10px;
+      position:relative;
+    }
+    .map-container {
+      position:relative;
+      width:100%;
+      border-radius:8px;
+      overflow:hidden;
+      background:#d0cfc8;
+    }
+    .map-container img {
+      width:100%;
+      height:auto;
+      display:block;
+    }
+    /* SVGオーバーレイ：画像と完全に重なる */
+    .map-overlay {
+      position:absolute;
+      top:0; left:0; width:100%; height:100%;
+      pointer-events:none;
+    }
+    .map-lbl { font-size:12px; color:var(--text3); text-align:center; margin-top:5px; }
 
+    /* DETAIL BODY */
     .detail-body { padding:14px 14px 6px; }
 
-    /* 省名行 */
     .name-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     .d-name { font-family:'Noto Serif SC',serif; font-size:30px; font-weight:700; color:var(--text); line-height:1.1; }
     .d-type { font-size:13px; color:var(--text3); background:var(--bg2); border-radius:20px; padding:3px 10px; white-space:nowrap; }
     .d-py { font-size:16px; color:var(--text2); margin-top:4px; letter-spacing:0.02em; }
 
-    /* 発音アイコンボタン */
+    /* 発音アイコン */
     .speak-icon-btn {
       background:none; border:none; cursor:pointer; padding:3px;
       display:inline-flex; align-items:center; justify-content:center;
-      touch-action:manipulation; flex-shrink:0;
-      transition:transform 0.1s;
+      touch-action:manipulation; flex-shrink:0; transition:transform 0.1s;
     }
     .speak-icon-btn:active { transform:scale(0.82); }
     .speak-icon-btn svg { display:block; }
@@ -168,15 +185,14 @@
 </div>
 
 <div id="detail-view">
+  <!-- 地図：画像 + SVGオーバーレイ -->
   <div class="map-area">
-    <div class="china-map-wrap">
-      <svg id="china-map" viewBox="0 0 400 370" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div class="map-lbl">中国地図での位置</div>
+    <div class="map-container" id="map-container">
+      <img id="map-img" src="images/chinamap04.jpg" alt="中国地図">
+      <!-- viewBoxは画像の実サイズ(px)に合わせる。JavaScriptで動的に設定 -->
+      <svg class="map-overlay" id="map-overlay" viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
-    <div class="shape-wrap">
-      <svg id="province-shape" viewBox="-12 -12 124 124" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div class="map-lbl" id="shape-lbl">省の形</div>
-    </div>
+    <div class="map-lbl">🔴 省庁所在地（省都）　🟡 省の重心</div>
   </div>
 
   <div class="detail-body">
@@ -244,97 +260,64 @@
 </div>
 
 <script>
+// ─────────────────────────────────────────────────────────
+// 座標系について：
+//   chinamap04.jpg のサイズは概ね 750×675px 程度と推定。
+//   viewBox="0 0 750 675" に設定し、各省の座標を
+//   実際の地図画像に合わせてチューニングしています。
+//
+//   cx/cy = 省の重心（黄色点）
+//   capX/capY = 省都の位置（赤点）
+//   ※ 画像を見ながら微調整が必要な場合は後述の調整モードを使用
+// ─────────────────────────────────────────────────────────
+
+// 地図画像の論理サイズ（viewBoxに使う）
+const MAP_W = 750;
+const MAP_H = 675;
+
 const PROVINCES = [
-  { id:'beijing',      name:'北京市',         py:'Běijīng',      type:'直轄市',    cap:'北京',     capPy:'Běijīng',      pop:21.5,  popRank:26, area:1.7,   areaRank:31, cx:220,cy:112 },
-  { id:'tianjin',      name:'天津市',         py:'Tiānjīn',      type:'直轄市',    cap:'天津',     capPy:'Tiānjīn',      pop:13.6,  popRank:27, area:1.2,   areaRank:32, cx:228,cy:124 },
-  { id:'hebei',        name:'河北省',         py:'Héběi',        type:'省',        cap:'石家庄',   capPy:'Shíjiāzhuāng', pop:74.7,  popRank:6,  area:18.8,  areaRank:14, cx:218,cy:132 },
-  { id:'shanxi',       name:'山西省',         py:'Shānxī',       type:'省',        cap:'太原',     capPy:'Tàiyuán',      pop:37.3,  popRank:19, area:15.6,  areaRank:19, cx:198,cy:138 },
-  { id:'neimenggu',    name:'内蒙古自治区',    py:'Nèi Měnggǔ',   type:'自治区',    cap:'呼和浩特', capPy:'Hūhéhàotè',    pop:24.0,  popRank:23, area:118.3, areaRank:3,  cx:198,cy:90  },
-  { id:'liaoning',     name:'辽宁省',         py:'Liáoníng',     type:'省',        cap:'沈阳',     capPy:'Shěnyáng',     pop:42.6,  popRank:14, area:14.8,  areaRank:21, cx:255,cy:108 },
-  { id:'jilin',        name:'吉林省',         py:'Jílín',        type:'省',        cap:'长春',     capPy:'Chángchūn',    pop:24.1,  popRank:22, area:18.7,  areaRank:15, cx:272,cy:90  },
-  { id:'heilongjiang', name:'黑龙江省',       py:'Hēilóngjiāng', type:'省',        cap:'哈尔滨',   capPy:'Hāěrbīn',      pop:31.5,  popRank:21, area:47.3,  areaRank:6,  cx:282,cy:63  },
-  { id:'shanghai',     name:'上海市',         py:'Shànghǎi',     type:'直轄市',    cap:'上海',     capPy:'Shànghǎi',     pop:24.9,  popRank:25, area:0.6,   areaRank:33, cx:248,cy:175 },
-  { id:'jiangsu',      name:'江苏省',         py:'Jiāngsū',      type:'省',        cap:'南京',     capPy:'Nánjīng',      pop:84.7,  popRank:4,  area:10.7,  areaRank:24, cx:240,cy:165 },
-  { id:'zhejiang',     name:'浙江省',         py:'Zhèjiāng',     type:'省',        cap:'杭州',     capPy:'Hángzhōu',     pop:64.6,  popRank:8,  area:10.2,  areaRank:25, cx:243,cy:182 },
-  { id:'anhui',        name:'安徽省',         py:'Ānhuī',        type:'省',        cap:'合肥',     capPy:'Héféi',        pop:61.0,  popRank:9,  area:14.0,  areaRank:22, cx:228,cy:172 },
-  { id:'fujian',       name:'福建省',         py:'Fújiàn',       type:'省',        cap:'福州',     capPy:'Fúzhōu',       pop:41.5,  popRank:15, area:12.1,  areaRank:23, cx:236,cy:200 },
-  { id:'jiangxi',      name:'江西省',         py:'Jiāngxī',      type:'省',        cap:'南昌',     capPy:'Nánchāng',     pop:45.2,  popRank:13, area:16.7,  areaRank:18, cx:224,cy:196 },
-  { id:'shandong',     name:'山东省',         py:'Shāndōng',     type:'省',        cap:'济南',     capPy:'Jǐnán',        pop:101.5, popRank:2,  area:15.8,  areaRank:20, cx:235,cy:148 },
-  { id:'henan',        name:'河南省',         py:'Hénán',        type:'省',        cap:'郑州',     capPy:'Zhèngzhōu',    pop:99.4,  popRank:3,  area:16.7,  areaRank:17, cx:218,cy:158 },
-  { id:'hubei',        name:'湖北省',         py:'Húběi',        type:'省',        cap:'武汉',     capPy:'Wǔhàn',        pop:58.2,  popRank:10, area:18.6,  areaRank:16, cx:213,cy:175 },
-  { id:'hunan',        name:'湖南省',         py:'Húnán',        type:'省',        cap:'长沙',     capPy:'Chángshā',     pop:66.4,  popRank:7,  area:21.2,  areaRank:13, cx:211,cy:194 },
-  { id:'guangdong',    name:'广东省',         py:'Guǎngdōng',    type:'省',        cap:'广州',     capPy:'Guǎngzhōu',    pop:126.0, popRank:1,  area:18.0,  areaRank:15, cx:216,cy:216 },
-  { id:'guangxi',      name:'广西壮族自治区',  py:'Guǎngxī',      type:'自治区',    cap:'南宁',     capPy:'Nánníng',      pop:50.1,  popRank:12, area:23.6,  areaRank:10, cx:196,cy:220 },
-  { id:'hainan',       name:'海南省',         py:'Hǎinán',       type:'省',        cap:'海口',     capPy:'Hǎikǒu',       pop:10.1,  popRank:28, area:3.5,   areaRank:29, cx:204,cy:242 },
-  { id:'chongqing',    name:'重庆市',         py:'Chóngqìng',    type:'直轄市',    cap:'重庆',     capPy:'Chóngqìng',    pop:32.0,  popRank:20, area:8.2,   areaRank:27, cx:190,cy:186 },
-  { id:'sichuan',      name:'四川省',         py:'Sìchuān',      type:'省',        cap:'成都',     capPy:'Chéngdū',      pop:83.7,  popRank:5,  area:48.6,  areaRank:5,  cx:170,cy:184 },
-  { id:'guizhou',      name:'贵州省',         py:'Guìzhōu',      type:'省',        cap:'贵阳',     capPy:'Guìyáng',      pop:38.5,  popRank:17, area:17.6,  areaRank:16, cx:186,cy:204 },
-  { id:'yunnan',       name:'云南省',         py:'Yúnnán',       type:'省',        cap:'昆明',     capPy:'Kūnmíng',      pop:47.2,  popRank:13, area:39.4,  areaRank:8,  cx:162,cy:215 },
-  { id:'xizang',       name:'西藏自治区',     py:'Xīzàng',       type:'自治区',    cap:'拉萨',     capPy:'Lāsà',         pop:3.6,   popRank:33, area:122.8, areaRank:2,  cx:112,cy:190 },
-  { id:'shaanxi',      name:'陕西省',         py:'Shǎnxī',       type:'省',        cap:'西安',     capPy:"Xī'ān",        pop:39.5,  popRank:16, area:20.6,  areaRank:12, cx:196,cy:162 },
-  { id:'gansu',        name:'甘肃省',         py:'Gānsù',        type:'省',        cap:'兰州',     capPy:'Lánzhōu',      pop:25.5,  popRank:22, area:42.6,  areaRank:7,  cx:154,cy:148 },
-  { id:'qinghai',      name:'青海省',         py:'Qīnghǎi',      type:'省',        cap:'西宁',     capPy:'Xīníng',       pop:5.9,   popRank:31, area:72.2,  areaRank:4,  cx:128,cy:158 },
-  { id:'ningxia',      name:'宁夏回族自治区',  py:'Níngxià',      type:'自治区',    cap:'银川',     capPy:'Yínchuān',     pop:7.2,   popRank:30, area:6.6,   areaRank:28, cx:184,cy:143 },
-  { id:'xinjiang',     name:'新疆维吾尔自治区',py:'Xīnjiāng',     type:'自治区',    cap:'乌鲁木齐', capPy:'Wūlǔmùqí',    pop:25.9,  popRank:21, area:166.0, areaRank:1,  cx:80, cy:120 },
-  { id:'taiwan',       name:'台湾省',         py:'Táiwān',       type:'省',        cap:'台北',     capPy:'Táiběi',       pop:23.4,  popRank:25, area:3.6,   areaRank:30, cx:258,cy:218 },
-  { id:'hongkong',     name:'香港特別行政区',  py:'Xiānggǎng',    type:'特別行政区',cap:'香港',     capPy:'Xiānggǎng',    pop:7.5,   popRank:29, area:0.1,   areaRank:34, cx:224,cy:224 },
-  { id:'macao',        name:'澳門特別行政区',  py:'Àomén',        type:'特別行政区',cap:'澳門',     capPy:'Àomén',        pop:0.7,   popRank:34, area:0.03,  areaRank:34, cx:218,cy:228 },
-];
-
-const SHAPES = {
-  beijing:'M35,28 L62,22 L72,33 L68,56 L56,67 L38,63 L28,52 L30,36 Z',
-  tianjin:'M40,32 L62,27 L70,40 L66,60 L54,65 L38,58 L32,44 Z',
-  hebei:'M18,18 L72,13 L82,28 L78,52 L60,72 L35,76 L16,62 L12,38 Z',
-  shanxi:'M32,12 L62,10 L70,27 L67,62 L54,82 L33,84 L20,66 L18,32 Z',
-  neimenggu:'M8,28 L28,12 L62,8 L92,18 L98,34 L82,46 L58,52 L36,56 L12,48 Z',
-  liaoning:'M18,22 L66,18 L76,33 L72,56 L54,67 L27,70 L13,55 L10,36 Z',
-  jilin:'M12,18 L70,16 L80,29 L75,56 L58,67 L28,70 L8,55 L6,33 Z',
-  heilongjiang:'M12,12 L74,10 L90,26 L87,54 L68,71 L38,73 L10,57 L6,28 Z',
-  shanghai:'M33,22 L66,19 L72,44 L66,71 L38,73 L26,54 L28,33 Z',
-  jiangsu:'M18,12 L72,10 L80,27 L76,58 L60,76 L32,78 L16,60 L13,32 Z',
-  zhejiang:'M20,18 L68,14 L76,32 L70,62 L48,77 L22,74 L12,52 L14,30 Z',
-  anhui:'M28,12 L66,10 L74,26 L70,58 L52,77 L28,80 L15,60 L17,28 Z',
-  fujian:'M18,16 L66,13 L76,30 L72,60 L52,77 L25,76 L12,56 L12,32 Z',
-  jiangxi:'M22,13 L68,10 L76,26 L73,58 L54,80 L26,82 L12,62 L14,27 Z',
-  shandong:'M12,22 L76,17 L83,36 L78,60 L52,72 L22,73 L8,57 L6,36 Z',
-  henan:'M16,18 L73,15 L81,30 L77,60 L54,76 L22,78 L10,58 L12,32 Z',
-  hubei:'M12,22 L75,19 L83,36 L78,60 L53,76 L18,73 L6,54 L8,36 Z',
-  hunan:'M18,16 L68,13 L77,28 L73,58 L50,80 L22,82 L10,60 L12,28 Z',
-  guangdong:'M10,20 L79,16 L86,33 L82,62 L58,80 L26,82 L8,62 L6,36 Z',
-  guangxi:'M12,18 L76,15 L83,30 L79,60 L54,80 L19,82 L6,57 L8,33 Z',
-  hainan:'M18,22 L72,19 L79,42 L73,70 L44,80 L20,74 L10,50 L12,33 Z',
-  chongqing:'M16,18 L73,15 L81,30 L77,60 L53,76 L20,78 L8,57 L10,32 Z',
-  sichuan:'M10,12 L79,9 L86,25 L83,57 L59,79 L22,81 L6,59 L8,27 Z',
-  guizhou:'M15,16 L73,13 L81,28 L77,57 L54,76 L19,79 L8,56 L10,29 Z',
-  yunnan:'M15,12 L73,9 L81,25 L78,57 L54,79 L19,82 L6,58 L9,26 Z',
-  xizang:'M6,18 L80,13 L89,30 L86,62 L62,80 L22,83 L6,64 L3,36 Z',
-  shaanxi:'M28,10 L62,8 L70,23 L66,58 L50,81 L26,84 L15,62 L17,25 Z',
-  gansu:'M8,13 L85,10 L91,25 L87,53 L63,68 L22,70 L6,50 L6,26 Z',
-  qinghai:'M6,16 L82,12 L88,28 L84,57 L60,76 L19,78 L5,58 L3,32 Z',
-  ningxia:'M30,16 L63,13 L70,28 L66,63 L46,77 L29,77 L18,60 L20,30 Z',
-  xinjiang:'M6,12 L82,9 L91,27 L87,57 L63,76 L19,79 L4,57 L3,28 Z',
-  taiwan:'M30,15 L65,13 L73,35 L68,68 L45,82 L25,76 L16,52 L18,30 Z',
-  hongkong:'M20,20 L70,18 L78,40 L73,68 L45,78 L20,72 L12,48 L14,32 Z',
-  macao:'M25,20 L65,18 L73,42 L67,70 L42,80 L22,73 L14,49 L16,33 Z',
-};
-
-// 中国国境（概略）
-const BORDER = 'M52,82 L60,70 L70,57 L80,49 L96,43 L110,36 L124,28 L138,22 L153,17 L168,15 L186,13 L206,12 L222,13 L240,16 L254,21 L267,26 L280,32 L292,40 L300,50 L304,62 L302,74 L296,84 L288,94 L283,102 L279,114 L276,124 L272,134 L268,144 L262,154 L256,164 L252,174 L250,185 L248,195 L247,205 L245,214 L241,224 L235,234 L227,242 L218,249 L208,256 L198,261 L186,264 L172,264 L158,260 L144,254 L131,247 L120,240 L109,231 L99,222 L89,213 L79,204 L68,193 L58,181 L50,168 L44,155 L40,142 L38,128 L38,114 L40,101 L45,90 L52,82 Z';
-
-// 省境ライン（主要のみ、破線で表示）
-const PROV_LINES = [
-  'M198,85 L196,110 L194,135 L192,160 L190,185',
-  'M220,112 L218,132 L215,155 L212,175 L210,195 L208,216',
-  'M240,125 L238,148 L235,165 L232,182 L228,202',
-  'M255,108 L252,122 L248,140 L244,158 L243,178',
-  'M272,88 L270,106 L266,125 L262,145',
-  'M80,120 L115,118 L150,118 L183,118 L218,116 L250,118 L280,116',
-  'M90,148 L125,147 L158,147 L190,145 L220,145 L248,147',
-  'M100,168 L135,167 L165,167 L196,167 L222,168 L248,168',
-  'M108,190 L140,188 L170,188 L200,188 L222,190 L246,192',
-  'M115,215 L150,214 L180,215 L206,215 L228,218',
-  'M148,18 L146,50 L143,82 L140,112',
-  'M183,14 L182,48 L180,80 L178,112 L176,142',
+  // 東北
+  { id:'heilongjiang', name:'黑龙江省',       py:'Hēilóngjiāng', type:'省',        cap:'哈尔滨',   capPy:'Hāěrbīn',      pop:31.5,  popRank:21, area:47.3,  areaRank:6,  cx:560, cy:80,  capX:530, capY:125 },
+  { id:'jilin',        name:'吉林省',          py:'Jílín',        type:'省',        cap:'长春',     capPy:'Chángchūn',    pop:24.1,  popRank:22, area:18.7,  areaRank:15, cx:540, cy:140, capX:520, capY:155 },
+  { id:'liaoning',     name:'辽宁省',          py:'Liáoníng',     type:'省',        cap:'沈阳',     capPy:'Shěnyáng',     pop:42.6,  popRank:14, area:14.8,  areaRank:21, cx:505, cy:185, capX:490, capY:185 },
+  // 华北
+  { id:'beijing',      name:'北京市',          py:'Běijīng',      type:'直轄市',    cap:'北京',     capPy:'Běijīng',      pop:21.5,  popRank:26, area:1.7,   areaRank:31, cx:438, cy:190, capX:438, capY:190 },
+  { id:'tianjin',      name:'天津市',          py:'Tiānjīn',      type:'直轄市',    cap:'天津',     capPy:'Tiānjīn',      pop:13.6,  popRank:27, area:1.2,   areaRank:32, cx:455, cy:205, capX:455, capY:205 },
+  { id:'hebei',        name:'河北省',          py:'Héběi',        type:'省',        cap:'石家庄',   capPy:'Shíjiāzhuāng', pop:74.7,  popRank:6,  area:18.8,  areaRank:14, cx:430, cy:225, capX:415, capY:240 },
+  { id:'shanxi',       name:'山西省',          py:'Shānxī',       type:'省',        cap:'太原',     capPy:'Tàiyuán',      pop:37.3,  popRank:19, area:15.6,  areaRank:19, cx:390, cy:240, capX:385, capY:235 },
+  { id:'neimenggu',    name:'内蒙古自治区',    py:'Nèi Měnggǔ',   type:'自治区',    cap:'呼和浩特', capPy:'Hūhéhàotè',    pop:24.0,  popRank:23, area:118.3, areaRank:3,  cx:390, cy:155, capX:390, capY:185 },
+  // 华东
+  { id:'shandong',     name:'山东省',          py:'Shāndōng',     type:'省',        cap:'济南',     capPy:'Jǐnán',        pop:101.5, popRank:2,  area:15.8,  areaRank:20, cx:460, cy:265, capX:450, capY:258 },
+  { id:'jiangsu',      name:'江苏省',          py:'Jiāngsū',      type:'省',        cap:'南京',     capPy:'Nánjīng',      pop:84.7,  popRank:4,  area:10.7,  areaRank:24, cx:475, cy:300, capX:455, capY:300 },
+  { id:'shanghai',     name:'上海市',          py:'Shànghǎi',     type:'直轄市',    cap:'上海',     capPy:'Shànghǎi',     pop:24.9,  popRank:25, area:0.6,   areaRank:33, cx:500, cy:315, capX:500, capY:315 },
+  { id:'zhejiang',     name:'浙江省',          py:'Zhèjiāng',     type:'省',        cap:'杭州',     capPy:'Hángzhōu',     pop:64.6,  popRank:8,  area:10.2,  areaRank:25, cx:490, cy:340, capX:478, capY:330 },
+  { id:'anhui',        name:'安徽省',          py:'Ānhuī',        type:'省',        cap:'合肥',     capPy:'Héféi',        pop:61.0,  popRank:9,  area:14.0,  areaRank:22, cx:455, cy:315, capX:450, capY:312 },
+  { id:'fujian',       name:'福建省',          py:'Fújiàn',       type:'省',        cap:'福州',     capPy:'Fúzhōu',       pop:41.5,  popRank:15, area:12.1,  areaRank:23, cx:480, cy:380, capX:480, capY:368 },
+  // 华中
+  { id:'henan',        name:'河南省',          py:'Hénán',        type:'省',        cap:'郑州',     capPy:'Zhèngzhōu',    pop:99.4,  popRank:3,  area:16.7,  areaRank:17, cx:430, cy:278, capX:430, capY:272 },
+  { id:'hubei',        name:'湖北省',          py:'Húběi',        type:'省',        cap:'武汉',     capPy:'Wǔhàn',        pop:58.2,  popRank:10, area:18.6,  areaRank:16, cx:420, cy:318, capX:435, capY:315 },
+  { id:'hunan',        name:'湖南省',          py:'Húnán',        type:'省',        cap:'长沙',     capPy:'Chángshā',     pop:66.4,  popRank:7,  area:21.2,  areaRank:13, cx:415, cy:360, capX:418, capY:355 },
+  { id:'jiangxi',      name:'江西省',          py:'Jiāngxī',      type:'省',        cap:'南昌',     capPy:'Nánchāng',     pop:45.2,  popRank:13, area:16.7,  areaRank:18, cx:455, cy:355, capX:452, capY:345 },
+  // 华南
+  { id:'guangdong',    name:'广东省',          py:'Guǎngdōng',    type:'省',        cap:'广州',     capPy:'Guǎngzhōu',    pop:126.0, popRank:1,  area:18.0,  areaRank:15, cx:435, cy:415, capX:428, capY:408 },
+  { id:'guangxi',      name:'广西壮族自治区',  py:'Guǎngxī',      type:'自治区',    cap:'南宁',     capPy:'Nánníng',      pop:50.1,  popRank:12, area:23.6,  areaRank:10, cx:390, cy:420, capX:385, capY:425 },
+  { id:'hainan',       name:'海南省',          py:'Hǎinán',       type:'省',        cap:'海口',     capPy:'Hǎikǒu',       pop:10.1,  popRank:28, area:3.5,   areaRank:29, cx:408, cy:468, capX:408, capY:462 },
+  // 西南
+  { id:'chongqing',    name:'重庆市',          py:'Chóngqìng',    type:'直轄市',    cap:'重庆',     capPy:'Chóngqìng',    pop:32.0,  popRank:20, area:8.2,   areaRank:27, cx:368, cy:340, capX:368, capY:340 },
+  { id:'sichuan',      name:'四川省',          py:'Sìchuān',      type:'省',        cap:'成都',     capPy:'Chéngdū',      pop:83.7,  popRank:5,  area:48.6,  areaRank:5,  cx:320, cy:345, capX:315, capY:348 },
+  { id:'guizhou',      name:'贵州省',          py:'Guìzhōu',      type:'省',        cap:'贵阳',     capPy:'Guìyáng',      pop:38.5,  popRank:17, area:17.6,  areaRank:16, cx:370, cy:390, capX:372, capY:388 },
+  { id:'yunnan',       name:'云南省',          py:'Yúnnán',       type:'省',        cap:'昆明',     capPy:'Kūnmíng',      pop:47.2,  popRank:13, area:39.4,  areaRank:8,  cx:308, cy:410, capX:318, capY:405 },
+  { id:'xizang',       name:'西藏自治区',      py:'Xīzàng',       type:'自治区',    cap:'拉萨',     capPy:'Lāsà',         pop:3.6,   popRank:33, area:122.8, areaRank:2,  cx:200, cy:360, capX:240, capY:355 },
+  // 西北
+  { id:'shaanxi',      name:'陕西省',          py:'Shǎnxī',       type:'省',        cap:'西安',     capPy:"Xī'ān",        pop:39.5,  popRank:16, area:20.6,  areaRank:12, cx:385, cy:280, capX:383, capY:285 },
+  { id:'gansu',        name:'甘肃省',          py:'Gānsù',        type:'省',        cap:'兰州',     capPy:'Lánzhōu',      pop:25.5,  popRank:22, area:42.6,  areaRank:7,  cx:305, cy:268, capX:320, capY:278 },
+  { id:'qinghai',      name:'青海省',          py:'Qīnghǎi',      type:'省',        cap:'西宁',     capPy:'Xīníng',       pop:5.9,   popRank:31, area:72.2,  areaRank:4,  cx:255, cy:290, capX:270, capY:285 },
+  { id:'ningxia',      name:'宁夏回族自治区',  py:'Níngxià',      type:'自治区',    cap:'銀川',     capPy:'Yínchuān',     pop:7.2,   popRank:30, area:6.6,   areaRank:28, cx:363, cy:248, capX:360, capY:245 },
+  { id:'xinjiang',     name:'新疆维吾尔自治区',py:'Xīnjiāng',     type:'自治区',    cap:'乌鲁木齐', capPy:'Wūlǔmùqí',    pop:25.9,  popRank:21, area:166.0, areaRank:1,  cx:150, cy:215, capX:195, capY:195 },
+  // その他
+  { id:'taiwan',       name:'台湾省',          py:'Táiwān',       type:'省',        cap:'台北',     capPy:'Táiběi',       pop:23.4,  popRank:25, area:3.6,   areaRank:30, cx:510, cy:395, capX:508, capY:382 },
+  { id:'hongkong',     name:'香港特別行政区',  py:'Xiānggǎng',    type:'特別行政区',cap:'香港',     capPy:'Xiānggǎng',    pop:7.5,   popRank:29, area:0.1,   areaRank:34, cx:453, cy:428, capX:453, capY:428 },
+  { id:'macao',        name:'澳門特別行政区',  py:'Àomén',        type:'特別行政区',cap:'澳門',     capPy:'Àomén',        pop:0.7,   popRank:34, area:0.03,  areaRank:34, cx:443, cy:432, capX:443, capY:432 },
 ];
 
 let currentIdx = 0;
@@ -342,6 +325,19 @@ const synth = window.speechSynthesis;
 let deferredPrompt = null;
 let activeSpeakBtn = null;
 
+// 画像ロード後にviewBoxを実サイズに合わせる
+const mapImg = document.getElementById('map-img');
+const mapOverlay = document.getElementById('map-overlay');
+
+function syncOverlay() {
+  const w = mapImg.naturalWidth  || MAP_W;
+  const h = mapImg.naturalHeight || MAP_H;
+  mapOverlay.setAttribute('viewBox', `0 0 ${w} ${h}`);
+}
+mapImg.addEventListener('load', syncOverlay);
+if (mapImg.complete) syncOverlay();
+
+// ── LIST ──
 function buildList() {
   const grid = document.getElementById('province-grid');
   PROVINCES.forEach((p, i) => {
@@ -392,55 +388,44 @@ function showDetail(idx) {
     document.getElementById('d-area-bar').style.width = ((34 - p.areaRank) / 33 * 100) + '%';
   });
 
-  document.getElementById('shape-lbl').textContent = p.name;
   document.getElementById('detail-view').scrollTop = 0;
-  drawMap(p);
-  drawShape(p);
-
-  // ③ 自動再生: 省名 → 800ms pause → 省都
+  drawDots(p);
   setTimeout(() => speakBoth(), 600);
 }
 
-// ④ 地図（国境 + 省境ライン）
-function drawMap(prov) {
-  const svg = document.getElementById('china-map');
-  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const mapBg   = dark ? '#2a231c' : '#e8e4da';
-  const fillClr = dark ? 'rgba(30,24,18,0.5)' : 'rgba(250,248,243,0.7)';
-  const bdrClr  = dark ? 'rgba(240,232,220,0.55)' : 'rgba(26,20,16,0.65)';
-  const provClr = dark ? 'rgba(240,232,220,0.18)' : 'rgba(26,20,16,0.22)';
-  const dotBase = dark ? 'rgba(240,232,220,0.20)' : 'rgba(26,20,16,0.12)';
+// ── 地図に赤点（省都）・黄点（省重心）を描画 ──
+function drawDots(p) {
+  // 画像の実サイズを取得してスケール係数を計算
+  const imgW = mapImg.naturalWidth  || MAP_W;
+  const imgH = mapImg.naturalHeight || MAP_H;
 
-  const lines = PROV_LINES.map(d =>
-    `<path d="${d}" fill="none" stroke="${provClr}" stroke-width="0.7" stroke-dasharray="3,2.5"/>`
-  ).join('');
+  // 座標はMAP_W×MAP_H基準で入力→実画像サイズにスケール
+  const sx = imgW / MAP_W;
+  const sy = imgH / MAP_H;
 
-  const dots = PROVINCES.map(p => {
-    const sel = p.id === prov.id;
-    return `<circle cx="${p.cx}" cy="${p.cy}" r="${sel?7:3.5}" fill="${sel?'#c0392b':dotBase}" stroke="${sel?'#fff':'none'}" stroke-width="${sel?1.5:0}"/>`;
-  }).join('');
+  const capX = p.capX * sx;
+  const capY = p.capY * sy;
 
-  svg.innerHTML = `
-    <rect width="400" height="370" fill="${mapBg}" rx="8"/>
-    <path d="${BORDER}" fill="${fillClr}" stroke="${bdrClr}" stroke-width="1.8" stroke-linejoin="round"/>
-    ${lines}
-    ${dots}
-    <circle cx="${prov.cx}" cy="${prov.cy}" r="7" fill="none" stroke="#c0392b" stroke-width="1.5" opacity="0.7">
-      <animate attributeName="r" values="7;18;7" dur="2.2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2.2s" repeatCount="indefinite"/>
+  // 点のサイズも画像サイズに合わせてスケール
+  const dotR = Math.max(8, imgW * 0.013);
+  const pulseR = dotR * 2.2;
+
+  mapOverlay.innerHTML = `
+    <!-- 省都：赤点＋パルスアニメ -->
+    <circle cx="${capX}" cy="${capY}" r="${pulseR}" fill="none" stroke="#c0392b" stroke-width="${dotR*0.25}" opacity="0.5">
+      <animate attributeName="r" values="${dotR};${pulseR*1.5};${dotR}" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0.0;0.7" dur="2s" repeatCount="indefinite"/>
     </circle>
-    <text x="${prov.cx}" y="${prov.cy-21}" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="700" font-family="'Noto Serif SC',serif">${prov.name.replace(/省$|市$/,'').substring(0,2)}</text>`;
+    <circle cx="${capX}" cy="${capY}" r="${dotR}" fill="#c0392b" stroke="#fff" stroke-width="${dotR*0.28}"/>
+    <!-- 省都ラベル -->
+    <text x="${capX}" y="${capY - dotR - 4}" text-anchor="middle"
+      font-size="${Math.max(14, imgW * 0.022)}" font-weight="700"
+      fill="#c0392b" stroke="#fff" stroke-width="3" paint-order="stroke"
+      font-family="'Noto Serif SC',serif">${p.cap}</text>
+  `;
 }
 
-function drawShape(p) {
-  const svg = document.getElementById('province-shape');
-  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const fill = dark ? 'rgba(192,57,43,0.40)' : 'rgba(192,57,43,0.16)';
-  const d = SHAPES[p.id] || 'M18,18 L82,18 L82,82 L18,82 Z';
-  svg.innerHTML = `<path d="${d}" fill="${fill}" stroke="#c0392b" stroke-width="2.5" stroke-linejoin="round"/>`;
-}
-
-// ③ 両方まとめて発音（省名 → 800ms → 省都）
+// ── Speech ──
 function speakBoth() {
   if (!synth) return;
   stopSpeaking();
@@ -455,7 +440,6 @@ function speakBoth() {
     provBtn && provBtn.classList.remove('playing');
     activeSpeakBtn = null;
     setTimeout(() => {
-      if (!synth) return;
       const u2 = new SpeechSynthesisUtterance(p.cap);
       u2.lang = 'zh-CN'; u2.rate = 0.82; u2.pitch = 1.0;
       u2.onstart = () => { activeSpeakBtn = capBtn; capBtn && capBtn.classList.add('playing'); };
@@ -468,14 +452,12 @@ function speakBoth() {
   synth.speak(u1);
 }
 
-// ① 個別ボタン
 function speakOne(target) {
   if (!synth) return;
   stopSpeaking();
   const p = PROVINCES[currentIdx];
   const text = target === 'prov' ? p.name : p.cap;
   const btn  = document.getElementById(target === 'prov' ? 'speak-prov-btn' : 'speak-cap-btn');
-
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'zh-CN'; u.rate = 0.82; u.pitch = 1.0;
   u.onstart = () => { activeSpeakBtn = btn; btn && btn.classList.add('playing'); };
@@ -498,6 +480,7 @@ function nextRandom() {
   showDetail(n);
 }
 
+// ── PWA ──
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredPrompt = e;
   if (!localStorage.getItem('install-dismissed'))
