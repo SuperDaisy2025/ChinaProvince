@@ -15,232 +15,142 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
     :root {
-      --bg:      #faf8f3;
-      --bg2:     #f0ede4;
-      --bg3:     #e8e4da;
-      --card:    #ffffff;
-      --text:    #1a1410;
-      --text2:   #6b5f52;
-      --text3:   #9e9186;
-      --red:     #c0392b;
-      --red2:    #e74c3c;
-      --gold:    #b8860b;
-      --border:  rgba(26,20,16,0.10);
-      --border2: rgba(26,20,16,0.18);
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bot: env(safe-area-inset-bottom, 0px);
+      --bg:#faf8f3; --bg2:#f0ede4; --bg3:#e8e4da; --card:#ffffff;
+      --text:#1a1410; --text2:#6b5f52; --text3:#9e9186; --red:#c0392b;
+      --border:rgba(26,20,16,0.10); --border2:rgba(26,20,16,0.18);
+      --safe-top:env(safe-area-inset-top,0px); --safe-bot:env(safe-area-inset-bottom,0px);
     }
-    @media (prefers-color-scheme: dark) {
+    @media (prefers-color-scheme:dark) {
       :root {
-        --bg: #1a1410; --bg2: #231e18; --bg3: #2e271f; --card: #2a231c;
-        --text: #f0e8dc; --text2: #a89880; --text3: #6e6055;
-        --border: rgba(240,232,220,0.10); --border2: rgba(240,232,220,0.20);
+        --bg:#1a1410; --bg2:#231e18; --bg3:#2e271f; --card:#2a231c;
+        --text:#f0e8dc; --text2:#a89880; --text3:#6e6055;
+        --border:rgba(240,232,220,0.10); --border2:rgba(240,232,220,0.20);
       }
     }
-
-    html, body { height: 100%; overflow: hidden; }
+    html,body { height:100%; overflow:hidden; }
     body {
-      font-family: 'Noto Sans SC', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
+      font-family:'Noto Sans SC',system-ui,sans-serif;
+      background:var(--bg); color:var(--text);
+      height:100dvh; display:flex; flex-direction:column;
     }
 
-    /* ───── HEADER ───── */
+    /* HEADER */
     .header {
-      background: var(--red);
-      color: #fff;
-      padding: 10px 14px;
-      padding-top: calc(10px + var(--safe-top));
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-      user-select: none;
+      background:var(--red); color:#fff;
+      padding:10px 14px; padding-top:calc(10px + var(--safe-top));
+      display:flex; align-items:center; gap:10px;
+      flex-shrink:0; user-select:none;
     }
-    .header-flag { font-size: 22px; line-height: 1; }
-    .header-title { font-size: 18px; font-weight: 700; font-family: 'Noto Serif SC', serif; letter-spacing: 0.06em; flex: 1; }
-    .header-sub { font-size: 10px; opacity: 0.8; margin-top: 1px; letter-spacing: 0.03em; }
+    .header-flag { font-size:22px; line-height:1; }
+    .header-title { font-size:18px; font-weight:700; font-family:'Noto Serif SC',serif; letter-spacing:0.06em; flex:1; }
+    .header-sub { font-size:13px; opacity:0.85; margin-top:2px; }
     .header-back {
-      background: rgba(255,255,255,0.22);
-      border: none; color: #fff;
-      width: 34px; height: 34px;
-      border-radius: 9px;
-      cursor: pointer;
-      font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s;
-      flex-shrink: 0;
+      background:rgba(255,255,255,0.22); border:none; color:#fff;
+      width:34px; height:34px; border-radius:9px; cursor:pointer; font-size:18px;
+      display:flex; align-items:center; justify-content:center;
+      transition:background 0.15s; flex-shrink:0;
     }
-    .header-back:active { background: rgba(255,255,255,0.38); }
+    .header-back:active { background:rgba(255,255,255,0.38); }
 
-    /* ───── LIST VIEW ───── */
+    /* LIST */
     #list-view {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px 8px calc(8px + var(--safe-bot));
+      flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+      padding:8px 8px calc(8px + var(--safe-bot));
     }
-    .province-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-    }
+    .province-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
     .prov-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 9px 3px 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: transform 0.12s, background 0.12s;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 2px;
-      touch-action: manipulation;
+      background:var(--card); border:1px solid var(--border); border-radius:10px;
+      padding:10px 3px 9px; cursor:pointer; text-align:center;
+      transition:transform 0.12s,background 0.12s;
+      display:flex; flex-direction:column; align-items:center; gap:3px;
+      touch-action:manipulation;
     }
-    .prov-btn:active { transform: scale(0.94); background: var(--red); border-color: var(--red); }
-    .prov-btn:active .pn, .prov-btn:active .pp { color: #fff !important; }
-    .pn { font-size: 13px; font-family: 'Noto Serif SC', serif; color: var(--text); font-weight: 600; line-height: 1.2; }
-    .pp { font-size: 8px; color: var(--text3); line-height: 1.3; }
+    .prov-btn:active { transform:scale(0.94); background:var(--red); border-color:var(--red); }
+    .prov-btn:active .pn,.prov-btn:active .pp { color:#fff !important; }
+    .pn { font-size:14px; font-family:'Noto Serif SC',serif; color:var(--text); font-weight:600; line-height:1.2; }
+    .pp { font-size:11px; color:var(--text3); line-height:1.3; }
 
-    /* ───── DETAIL VIEW ───── */
-    #detail-view {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      display: none;
+    /* DETAIL */
+    #detail-view { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; }
+
+    .map-area { background:var(--bg2); padding:12px 12px 8px; display:flex; gap:10px; align-items:flex-start; }
+    .china-map-wrap { flex:1; min-width:0; }
+    #china-map { width:100%; height:auto; border-radius:8px; display:block; }
+    .shape-wrap { width:95px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    #province-shape { width:100%; height:auto; border:1px solid var(--border); border-radius:8px; background:var(--card); display:block; }
+    .map-lbl { font-size:13px; color:var(--text3); text-align:center; margin-top:2px; }
+
+    .detail-body { padding:14px 14px 6px; }
+
+    /* 省名行 */
+    .name-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .d-name { font-family:'Noto Serif SC',serif; font-size:30px; font-weight:700; color:var(--text); line-height:1.1; }
+    .d-type { font-size:13px; color:var(--text3); background:var(--bg2); border-radius:20px; padding:3px 10px; white-space:nowrap; }
+    .d-py { font-size:16px; color:var(--text2); margin-top:4px; letter-spacing:0.02em; }
+
+    /* 発音アイコンボタン */
+    .speak-icon-btn {
+      background:none; border:none; cursor:pointer; padding:3px;
+      display:inline-flex; align-items:center; justify-content:center;
+      touch-action:manipulation; flex-shrink:0;
+      transition:transform 0.1s;
     }
-
-    .map-area {
-      background: var(--bg2);
-      padding: 12px 12px 8px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
+    .speak-icon-btn:active { transform:scale(0.82); }
+    .speak-icon-btn svg { display:block; }
+    .speak-icon-btn .bar1,.speak-icon-btn .bar2,.speak-icon-btn .bar3 {
+      transform-box:fill-box; transform-origin:center bottom;
     }
-    .china-map-wrap { flex: 1; min-width: 0; }
-    #china-map { width: 100%; height: auto; border-radius: 8px; display: block; }
-    .shape-wrap {
-      width: 95px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-    #province-shape { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--card); display: block; }
-    .map-lbl { font-size: 9px; color: var(--text3); text-align: center; }
+    .speak-icon-btn.playing .bar1 { animation:sb1 0.7s ease-in-out infinite; }
+    .speak-icon-btn.playing .bar2 { animation:sb2 0.7s ease-in-out infinite 0.15s; }
+    .speak-icon-btn.playing .bar3 { animation:sb3 0.7s ease-in-out infinite 0.30s; }
+    @keyframes sb1 { 0%,100%{transform:scaleY(0.45)} 50%{transform:scaleY(0.9)} }
+    @keyframes sb2 { 0%,100%{transform:scaleY(0.5)}  50%{transform:scaleY(1.0)} }
+    @keyframes sb3 { 0%,100%{transform:scaleY(0.45)} 50%{transform:scaleY(0.8)} }
 
-    .detail-body { padding: 14px 14px 6px; }
-
-    .name-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-    .d-name { font-family: 'Noto Serif SC', serif; font-size: 30px; font-weight: 700; color: var(--text); line-height: 1.1; }
-    .d-type { font-size: 10px; color: var(--text3); background: var(--bg2); border-radius: 20px; padding: 2px 8px; align-self: center; white-space: nowrap; }
-    .d-py { font-size: 15px; color: var(--text2); margin-top: 3px; letter-spacing: 0.02em; }
-
+    /* 省会 */
     .cap-block {
-      margin-top: 12px;
-      background: var(--bg2);
-      border-radius: 10px;
-      padding: 11px 13px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      margin-top:12px; background:var(--bg2); border-radius:10px;
+      padding:11px 13px; display:flex; align-items:center; gap:10px;
     }
-    .cap-icon { font-size: 20px; flex-shrink: 0; }
-    .cap-label { font-size: 10px; color: var(--text3); margin-bottom: 2px; }
-    .cap-name { font-family: 'Noto Serif SC', serif; font-size: 20px; font-weight: 600; line-height: 1.2; }
-    .cap-py { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .cap-icon { font-size:20px; flex-shrink:0; }
+    .cap-label { font-size:13px; color:var(--text3); margin-bottom:3px; }
+    .cap-name-row { display:flex; align-items:center; gap:8px; }
+    .cap-name { font-family:'Noto Serif SC',serif; font-size:22px; font-weight:600; line-height:1.2; }
+    .cap-py { font-size:14px; color:var(--text2); margin-top:2px; }
 
-    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-    .stat-card { background: var(--bg2); border-radius: 10px; padding: 10px 12px; }
-    .stat-lbl { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
-    .stat-rank { font-size: 22px; font-weight: 700; color: var(--red); line-height: 1; }
-    .stat-val { font-size: 10px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
-    .rank-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 7px; overflow: hidden; }
-    .rank-fill { height: 100%; background: var(--red); border-radius: 2px; width: 0; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
+    /* stats */
+    .stats-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+    .stat-card { background:var(--bg2); border-radius:10px; padding:10px 12px; }
+    .stat-lbl { font-size:13px; color:var(--text3); margin-bottom:4px; }
+    .stat-rank { font-size:24px; font-weight:700; color:var(--red); line-height:1; }
+    .stat-val { font-size:13px; color:var(--text2); margin-top:3px; line-height:1.4; }
+    .rank-bar { height:4px; background:var(--border); border-radius:2px; margin-top:7px; overflow:hidden; }
+    .rank-fill { height:100%; background:var(--red); border-radius:2px; width:0; transition:width 0.7s cubic-bezier(0.4,0,0.2,1); }
 
-    /* ───── ACTIONS ───── */
-    .actions {
-      display: flex;
-      gap: 8px;
-      padding: 12px 14px calc(12px + var(--safe-bot));
-    }
-    .btn-speak {
-      flex: 1;
-      background: var(--red);
-      color: #fff;
-      border: none;
-      border-radius: 11px;
-      padding: 13px 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: opacity 0.15s, transform 0.1s;
-      touch-action: manipulation;
-    }
-    .btn-speak:active { opacity: 0.78; transform: scale(0.97); }
+    /* ACTIONS */
+    .actions { display:flex; gap:8px; padding:12px 14px calc(12px + var(--safe-bot)); }
     .btn-nav {
-      background: var(--card);
-      border: 1px solid var(--border2);
-      color: var(--text);
-      border-radius: 11px;
-      padding: 13px 13px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.12s, transform 0.1s;
-      touch-action: manipulation;
-      white-space: nowrap;
+      flex:1; background:var(--card); border:1px solid var(--border2); color:var(--text);
+      border-radius:11px; padding:14px 13px; font-size:15px; font-weight:500;
+      cursor:pointer; transition:background 0.12s,transform 0.1s;
+      touch-action:manipulation; white-space:nowrap; text-align:center;
     }
-    .btn-nav:active { background: var(--bg3); transform: scale(0.96); }
-
-    /* sound wave */
-    .sound-wave { display: flex; align-items: center; gap: 2.5px; height: 18px; }
-    .sound-wave span { display: block; width: 3px; background: #fff; border-radius: 2px; }
-    .sound-wave span:nth-child(1) { height: 5px; }
-    .sound-wave span:nth-child(2) { height: 11px; }
-    .sound-wave span:nth-child(3) { height: 16px; }
-    .sound-wave span:nth-child(4) { height: 9px; }
-    .sound-wave span:nth-child(5) { height: 5px; }
-    .speaking .sound-wave span { animation: wv 0.75s ease-in-out infinite; }
-    .speaking .sound-wave span:nth-child(1) { animation-delay: 0s; }
-    .speaking .sound-wave span:nth-child(2) { animation-delay: 0.12s; }
-    .speaking .sound-wave span:nth-child(3) { animation-delay: 0.24s; }
-    .speaking .sound-wave span:nth-child(4) { animation-delay: 0.36s; }
-    .speaking .sound-wave span:nth-child(5) { animation-delay: 0.48s; }
-    @keyframes wv { 0%,100%{transform:scaleY(0.45)} 50%{transform:scaleY(1)} }
+    .btn-nav:active { background:var(--bg3); transform:scale(0.96); }
 
     /* install toast */
     #install-bar {
-      position: fixed;
-      bottom: calc(0px + var(--safe-bot));
-      left: 0; right: 0;
-      background: #1a1410;
-      color: #f0e8dc;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 13px;
-      z-index: 200;
-      transform: translateY(100%);
-      transition: transform 0.35s ease;
+      position:fixed; bottom:calc(0px + var(--safe-bot)); left:0; right:0;
+      background:#1a1410; color:#f0e8dc; padding:12px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-size:14px; z-index:200; transform:translateY(100%); transition:transform 0.35s ease;
     }
-    #install-bar.show { transform: translateY(0); }
+    #install-bar.show { transform:translateY(0); }
     #install-bar button {
-      background: var(--red); color: #fff;
-      border: none; border-radius: 8px;
-      padding: 7px 14px; font-size: 12px; font-weight: 600;
-      cursor: pointer; white-space: nowrap;
+      background:var(--red); color:#fff; border:none; border-radius:8px;
+      padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
     }
-    #install-dismiss { background: transparent !important; color: var(--text3) !important; padding: 7px 8px !important; }
+    #install-dismiss { background:transparent !important; color:#a89880 !important; padding:7px 8px !important; }
   </style>
 </head>
 <body>
@@ -253,12 +163,10 @@
   </div>
 </div>
 
-<!-- LIST -->
 <div id="list-view">
   <div class="province-grid" id="province-grid"></div>
 </div>
 
-<!-- DETAIL -->
 <div id="detail-view">
   <div class="map-area">
     <div class="china-map-wrap">
@@ -274,15 +182,33 @@
   <div class="detail-body">
     <div class="name-row">
       <span class="d-name" id="d-name"></span>
+      <button class="speak-icon-btn" id="speak-prov-btn" onclick="speakOne('prov')">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <circle cx="15" cy="15" r="14" fill="#c0392b"/>
+          <rect class="bar1" x="8"  y="11" width="3.5" height="8"  rx="1.75" fill="#fff"/>
+          <rect class="bar2" x="13" y="9"  width="3.5" height="12" rx="1.75" fill="#fff"/>
+          <rect class="bar3" x="18" y="10" width="3.5" height="10" rx="1.75" fill="#fff"/>
+        </svg>
+      </button>
       <span class="d-type" id="d-type"></span>
     </div>
     <div class="d-py" id="d-py"></div>
 
     <div class="cap-block">
       <div class="cap-icon">🏛</div>
-      <div>
+      <div style="flex:1;min-width:0">
         <div class="cap-label">省会（省都）</div>
-        <div class="cap-name" id="d-cap"></div>
+        <div class="cap-name-row">
+          <span class="cap-name" id="d-cap"></span>
+          <button class="speak-icon-btn" id="speak-cap-btn" onclick="speakOne('cap')">
+            <svg width="26" height="26" viewBox="0 0 30 30">
+              <circle cx="15" cy="15" r="14" fill="#c0392b"/>
+              <rect class="bar1" x="8"  y="11" width="3.5" height="8"  rx="1.75" fill="#fff"/>
+              <rect class="bar2" x="13" y="9"  width="3.5" height="12" rx="1.75" fill="#fff"/>
+              <rect class="bar3" x="18" y="10" width="3.5" height="10" rx="1.75" fill="#fff"/>
+            </svg>
+          </button>
+        </div>
         <div class="cap-py" id="d-cap-py"></div>
       </div>
     </div>
@@ -304,131 +230,140 @@
   </div>
 
   <div class="actions">
-    <button class="btn-nav" id="btn-back" onclick="showList()">← 一覧</button>
-    <button class="btn-speak" id="btn-speak" onclick="speakProvince()">
-      <span class="sound-wave"><span></span><span></span><span></span><span></span><span></span></span>
-      発音する
-    </button>
-    <button class="btn-nav" id="btn-next" onclick="nextRandom()">次へ →</button>
+    <button class="btn-nav" onclick="showList()">← 一覧</button>
+    <button class="btn-nav" onclick="nextRandom()">次へ →</button>
   </div>
 </div>
 
-<!-- INSTALL BAR -->
 <div id="install-bar">
   <span>ホーム画面に追加できます</span>
   <div style="display:flex;gap:6px">
     <button id="install-dismiss" onclick="dismissInstall()">後で</button>
-    <button id="install-btn" onclick="doInstall()">追加する</button>
+    <button onclick="doInstall()">追加する</button>
   </div>
 </div>
 
 <script>
 const PROVINCES = [
-  { id:'beijing',      name:'北京市',   py:'Běijīng',      type:'直轄市', cap:'北京',   capPy:'Běijīng',    pop:21.5,  popRank:26, area:1.7,   areaRank:31, cx:220, cy:112, tts:'北京' },
-  { id:'tianjin',      name:'天津市',   py:'Tiānjīn',      type:'直轄市', cap:'天津',   capPy:'Tiānjīn',    pop:13.6,  popRank:27, area:1.2,   areaRank:32, cx:228, cy:124, tts:'天津' },
-  { id:'hebei',        name:'河北省',   py:'Héběi',        type:'省',   cap:'石家庄',  capPy:'Shíjiāzhuāng', pop:74.7, popRank:6,  area:18.8,  areaRank:14, cx:218, cy:132, tts:'河北省，省会石家庄' },
-  { id:'shanxi',       name:'山西省',   py:'Shānxī',       type:'省',   cap:'太原',   capPy:'Tàiyuán',    pop:37.3,  popRank:19, area:15.6,  areaRank:19, cx:198, cy:138, tts:'山西省，省会太原' },
-  { id:'neimenggu',    name:'内蒙古自治区', py:'Nèi Měnggǔ', type:'自治区', cap:'呼和浩特', capPy:'Hūhéhàotè', pop:24.0, popRank:23, area:118.3, areaRank:3,  cx:198, cy:90,  tts:'内蒙古自治区，首府呼和浩特' },
-  { id:'liaoning',     name:'辽宁省',   py:'Liáoníng',     type:'省',   cap:'沈阳',   capPy:'Shěnyáng',   pop:42.6,  popRank:14, area:14.8,  areaRank:21, cx:255, cy:108, tts:'辽宁省，省会沈阳' },
-  { id:'jilin',        name:'吉林省',   py:'Jílín',        type:'省',   cap:'长春',   capPy:'Chángchūn',  pop:24.1,  popRank:22, area:18.7,  areaRank:15, cx:272, cy:90,  tts:'吉林省，省会长春' },
-  { id:'heilongjiang', name:'黑龙江省',  py:'Hēilóngjiāng', type:'省',   cap:'哈尔滨',  capPy:'Hāěrbīn',    pop:31.5,  popRank:21, area:47.3,  areaRank:6,  cx:282, cy:63,  tts:'黑龙江省，省会哈尔滨' },
-  { id:'shanghai',     name:'上海市',   py:'Shànghǎi',     type:'直轄市', cap:'上海',   capPy:'Shànghǎi',   pop:24.9,  popRank:25, area:0.6,   areaRank:33, cx:248, cy:175, tts:'上海' },
-  { id:'jiangsu',      name:'江苏省',   py:'Jiāngsū',      type:'省',   cap:'南京',   capPy:'Nánjīng',    pop:84.7,  popRank:4,  area:10.7,  areaRank:24, cx:240, cy:165, tts:'江苏省，省会南京' },
-  { id:'zhejiang',     name:'浙江省',   py:'Zhèjiāng',     type:'省',   cap:'杭州',   capPy:'Hángzhōu',   pop:64.6,  popRank:8,  area:10.2,  areaRank:25, cx:243, cy:182, tts:'浙江省，省会杭州' },
-  { id:'anhui',        name:'安徽省',   py:'Ānhuī',        type:'省',   cap:'合肥',   capPy:'Héféi',      pop:61.0,  popRank:9,  area:14.0,  areaRank:22, cx:228, cy:172, tts:'安徽省，省会合肥' },
-  { id:'fujian',       name:'福建省',   py:'Fújiàn',       type:'省',   cap:'福州',   capPy:'Fúzhōu',     pop:41.5,  popRank:15, area:12.1,  areaRank:23, cx:236, cy:200, tts:'福建省，省会福州' },
-  { id:'jiangxi',      name:'江西省',   py:'Jiāngxī',      type:'省',   cap:'南昌',   capPy:'Nánchāng',   pop:45.2,  popRank:13, area:16.7,  areaRank:18, cx:224, cy:196, tts:'江西省，省会南昌' },
-  { id:'shandong',     name:'山东省',   py:'Shāndōng',     type:'省',   cap:'济南',   capPy:'Jǐnán',      pop:101.5, popRank:2,  area:15.8,  areaRank:20, cx:235, cy:148, tts:'山东省，省会济南' },
-  { id:'henan',        name:'河南省',   py:'Hénán',        type:'省',   cap:'郑州',   capPy:'Zhèngzhōu',  pop:99.4,  popRank:3,  area:16.7,  areaRank:17, cx:218, cy:158, tts:'河南省，省会郑州' },
-  { id:'hubei',        name:'湖北省',   py:'Húběi',        type:'省',   cap:'武汉',   capPy:'Wǔhàn',      pop:58.2,  popRank:10, area:18.6,  areaRank:16, cx:213, cy:175, tts:'湖北省，省会武汉' },
-  { id:'hunan',        name:'湖南省',   py:'Húnán',        type:'省',   cap:'长沙',   capPy:'Chángshā',   pop:66.4,  popRank:7,  area:21.2,  areaRank:13, cx:211, cy:194, tts:'湖南省，省会长沙' },
-  { id:'guangdong',    name:'广东省',   py:'Guǎngdōng',    type:'省',   cap:'广州',   capPy:'Guǎngzhōu',  pop:126.0, popRank:1,  area:18.0,  areaRank:15, cx:216, cy:216, tts:'广东省，省会广州' },
-  { id:'guangxi',      name:'广西壮族自治区', py:'Guǎngxī', type:'自治区', cap:'南宁',  capPy:'Nánníng',    pop:50.1,  popRank:12, area:23.6,  areaRank:10, cx:196, cy:220, tts:'广西壮族自治区，首府南宁' },
-  { id:'hainan',       name:'海南省',   py:'Hǎinán',       type:'省',   cap:'海口',   capPy:'Hǎikǒu',     pop:10.1,  popRank:28, area:3.5,   areaRank:29, cx:204, cy:242, tts:'海南省，省会海口' },
-  { id:'chongqing',    name:'重庆市',   py:'Chóngqìng',    type:'直轄市', cap:'重庆',   capPy:'Chóngqìng',  pop:32.0,  popRank:20, area:8.2,   areaRank:27, cx:190, cy:186, tts:'重庆' },
-  { id:'sichuan',      name:'四川省',   py:'Sìchuān',      type:'省',   cap:'成都',   capPy:'Chéngdū',    pop:83.7,  popRank:5,  area:48.6,  areaRank:5,  cx:170, cy:184, tts:'四川省，省会成都' },
-  { id:'guizhou',      name:'贵州省',   py:'Guìzhōu',      type:'省',   cap:'贵阳',   capPy:'Guìyáng',    pop:38.5,  popRank:17, area:17.6,  areaRank:16, cx:186, cy:204, tts:'贵州省，省会贵阳' },
-  { id:'yunnan',       name:'云南省',   py:'Yúnnán',       type:'省',   cap:'昆明',   capPy:'Kūnmíng',    pop:47.2,  popRank:13, area:39.4,  areaRank:8,  cx:162, cy:215, tts:'云南省，省会昆明' },
-  { id:'xizang',       name:'西藏自治区', py:'Xīzàng',     type:'自治区', cap:'拉萨',   capPy:'Lāsà',       pop:3.6,   popRank:33, area:122.8, areaRank:2,  cx:112, cy:190, tts:'西藏自治区，首府拉萨' },
-  { id:'shaanxi',      name:'陕西省',   py:'Shǎnxī',       type:'省',   cap:'西安',   capPy:"Xī'ān",      pop:39.5,  popRank:16, area:20.6,  areaRank:12, cx:196, cy:162, tts:'陕西省，省会西安' },
-  { id:'gansu',        name:'甘肃省',   py:'Gānsù',        type:'省',   cap:'兰州',   capPy:'Lánzhōu',    pop:25.5,  popRank:22, area:42.6,  areaRank:7,  cx:154, cy:148, tts:'甘肃省，省会兰州' },
-  { id:'qinghai',      name:'青海省',   py:'Qīnghǎi',      type:'省',   cap:'西宁',   capPy:'Xīníng',     pop:5.9,   popRank:31, area:72.2,  areaRank:4,  cx:128, cy:158, tts:'青海省，省会西宁' },
-  { id:'ningxia',      name:'宁夏回族自治区', py:'Níngxià', type:'自治区', cap:'银川',  capPy:'Yínchuān',   pop:7.2,   popRank:30, area:6.6,   areaRank:28, cx:184, cy:143, tts:'宁夏回族自治区，首府银川' },
-  { id:'xinjiang',     name:'新疆维吾尔自治区', py:'Xīnjiāng', type:'自治区', cap:'乌鲁木齐', capPy:'Wūlǔmùqí', pop:25.9, popRank:21, area:166.0, areaRank:1, cx:80, cy:120, tts:'新疆维吾尔自治区，首府乌鲁木齐' },
-  { id:'taiwan',       name:'台湾省',   py:'Táiwān',       type:'省',   cap:'台北',   capPy:'Táiběi',     pop:23.4,  popRank:25, area:3.6,   areaRank:30, cx:258, cy:218, tts:'台湾省，省会台北' },
-  { id:'hongkong',     name:'香港特別行政区', py:'Xiānggǎng', type:'特別行政区', cap:'香港', capPy:'Xiānggǎng', pop:7.5, popRank:29, area:0.1,  areaRank:34, cx:224, cy:224, tts:'香港特别行政区' },
-  { id:'macao',        name:'澳門特別行政区', py:'Àomén',    type:'特別行政区', cap:'澳門', capPy:'Àomén',     pop:0.7,  popRank:34, area:0.03,  areaRank:34, cx:218, cy:228, tts:'澳门特别行政区' },
+  { id:'beijing',      name:'北京市',         py:'Běijīng',      type:'直轄市',    cap:'北京',     capPy:'Běijīng',      pop:21.5,  popRank:26, area:1.7,   areaRank:31, cx:220,cy:112 },
+  { id:'tianjin',      name:'天津市',         py:'Tiānjīn',      type:'直轄市',    cap:'天津',     capPy:'Tiānjīn',      pop:13.6,  popRank:27, area:1.2,   areaRank:32, cx:228,cy:124 },
+  { id:'hebei',        name:'河北省',         py:'Héběi',        type:'省',        cap:'石家庄',   capPy:'Shíjiāzhuāng', pop:74.7,  popRank:6,  area:18.8,  areaRank:14, cx:218,cy:132 },
+  { id:'shanxi',       name:'山西省',         py:'Shānxī',       type:'省',        cap:'太原',     capPy:'Tàiyuán',      pop:37.3,  popRank:19, area:15.6,  areaRank:19, cx:198,cy:138 },
+  { id:'neimenggu',    name:'内蒙古自治区',    py:'Nèi Měnggǔ',   type:'自治区',    cap:'呼和浩特', capPy:'Hūhéhàotè',    pop:24.0,  popRank:23, area:118.3, areaRank:3,  cx:198,cy:90  },
+  { id:'liaoning',     name:'辽宁省',         py:'Liáoníng',     type:'省',        cap:'沈阳',     capPy:'Shěnyáng',     pop:42.6,  popRank:14, area:14.8,  areaRank:21, cx:255,cy:108 },
+  { id:'jilin',        name:'吉林省',         py:'Jílín',        type:'省',        cap:'长春',     capPy:'Chángchūn',    pop:24.1,  popRank:22, area:18.7,  areaRank:15, cx:272,cy:90  },
+  { id:'heilongjiang', name:'黑龙江省',       py:'Hēilóngjiāng', type:'省',        cap:'哈尔滨',   capPy:'Hāěrbīn',      pop:31.5,  popRank:21, area:47.3,  areaRank:6,  cx:282,cy:63  },
+  { id:'shanghai',     name:'上海市',         py:'Shànghǎi',     type:'直轄市',    cap:'上海',     capPy:'Shànghǎi',     pop:24.9,  popRank:25, area:0.6,   areaRank:33, cx:248,cy:175 },
+  { id:'jiangsu',      name:'江苏省',         py:'Jiāngsū',      type:'省',        cap:'南京',     capPy:'Nánjīng',      pop:84.7,  popRank:4,  area:10.7,  areaRank:24, cx:240,cy:165 },
+  { id:'zhejiang',     name:'浙江省',         py:'Zhèjiāng',     type:'省',        cap:'杭州',     capPy:'Hángzhōu',     pop:64.6,  popRank:8,  area:10.2,  areaRank:25, cx:243,cy:182 },
+  { id:'anhui',        name:'安徽省',         py:'Ānhuī',        type:'省',        cap:'合肥',     capPy:'Héféi',        pop:61.0,  popRank:9,  area:14.0,  areaRank:22, cx:228,cy:172 },
+  { id:'fujian',       name:'福建省',         py:'Fújiàn',       type:'省',        cap:'福州',     capPy:'Fúzhōu',       pop:41.5,  popRank:15, area:12.1,  areaRank:23, cx:236,cy:200 },
+  { id:'jiangxi',      name:'江西省',         py:'Jiāngxī',      type:'省',        cap:'南昌',     capPy:'Nánchāng',     pop:45.2,  popRank:13, area:16.7,  areaRank:18, cx:224,cy:196 },
+  { id:'shandong',     name:'山东省',         py:'Shāndōng',     type:'省',        cap:'济南',     capPy:'Jǐnán',        pop:101.5, popRank:2,  area:15.8,  areaRank:20, cx:235,cy:148 },
+  { id:'henan',        name:'河南省',         py:'Hénán',        type:'省',        cap:'郑州',     capPy:'Zhèngzhōu',    pop:99.4,  popRank:3,  area:16.7,  areaRank:17, cx:218,cy:158 },
+  { id:'hubei',        name:'湖北省',         py:'Húběi',        type:'省',        cap:'武汉',     capPy:'Wǔhàn',        pop:58.2,  popRank:10, area:18.6,  areaRank:16, cx:213,cy:175 },
+  { id:'hunan',        name:'湖南省',         py:'Húnán',        type:'省',        cap:'长沙',     capPy:'Chángshā',     pop:66.4,  popRank:7,  area:21.2,  areaRank:13, cx:211,cy:194 },
+  { id:'guangdong',    name:'广东省',         py:'Guǎngdōng',    type:'省',        cap:'广州',     capPy:'Guǎngzhōu',    pop:126.0, popRank:1,  area:18.0,  areaRank:15, cx:216,cy:216 },
+  { id:'guangxi',      name:'广西壮族自治区',  py:'Guǎngxī',      type:'自治区',    cap:'南宁',     capPy:'Nánníng',      pop:50.1,  popRank:12, area:23.6,  areaRank:10, cx:196,cy:220 },
+  { id:'hainan',       name:'海南省',         py:'Hǎinán',       type:'省',        cap:'海口',     capPy:'Hǎikǒu',       pop:10.1,  popRank:28, area:3.5,   areaRank:29, cx:204,cy:242 },
+  { id:'chongqing',    name:'重庆市',         py:'Chóngqìng',    type:'直轄市',    cap:'重庆',     capPy:'Chóngqìng',    pop:32.0,  popRank:20, area:8.2,   areaRank:27, cx:190,cy:186 },
+  { id:'sichuan',      name:'四川省',         py:'Sìchuān',      type:'省',        cap:'成都',     capPy:'Chéngdū',      pop:83.7,  popRank:5,  area:48.6,  areaRank:5,  cx:170,cy:184 },
+  { id:'guizhou',      name:'贵州省',         py:'Guìzhōu',      type:'省',        cap:'贵阳',     capPy:'Guìyáng',      pop:38.5,  popRank:17, area:17.6,  areaRank:16, cx:186,cy:204 },
+  { id:'yunnan',       name:'云南省',         py:'Yúnnán',       type:'省',        cap:'昆明',     capPy:'Kūnmíng',      pop:47.2,  popRank:13, area:39.4,  areaRank:8,  cx:162,cy:215 },
+  { id:'xizang',       name:'西藏自治区',     py:'Xīzàng',       type:'自治区',    cap:'拉萨',     capPy:'Lāsà',         pop:3.6,   popRank:33, area:122.8, areaRank:2,  cx:112,cy:190 },
+  { id:'shaanxi',      name:'陕西省',         py:'Shǎnxī',       type:'省',        cap:'西安',     capPy:"Xī'ān",        pop:39.5,  popRank:16, area:20.6,  areaRank:12, cx:196,cy:162 },
+  { id:'gansu',        name:'甘肃省',         py:'Gānsù',        type:'省',        cap:'兰州',     capPy:'Lánzhōu',      pop:25.5,  popRank:22, area:42.6,  areaRank:7,  cx:154,cy:148 },
+  { id:'qinghai',      name:'青海省',         py:'Qīnghǎi',      type:'省',        cap:'西宁',     capPy:'Xīníng',       pop:5.9,   popRank:31, area:72.2,  areaRank:4,  cx:128,cy:158 },
+  { id:'ningxia',      name:'宁夏回族自治区',  py:'Níngxià',      type:'自治区',    cap:'银川',     capPy:'Yínchuān',     pop:7.2,   popRank:30, area:6.6,   areaRank:28, cx:184,cy:143 },
+  { id:'xinjiang',     name:'新疆维吾尔自治区',py:'Xīnjiāng',     type:'自治区',    cap:'乌鲁木齐', capPy:'Wūlǔmùqí',    pop:25.9,  popRank:21, area:166.0, areaRank:1,  cx:80, cy:120 },
+  { id:'taiwan',       name:'台湾省',         py:'Táiwān',       type:'省',        cap:'台北',     capPy:'Táiběi',       pop:23.4,  popRank:25, area:3.6,   areaRank:30, cx:258,cy:218 },
+  { id:'hongkong',     name:'香港特別行政区',  py:'Xiānggǎng',    type:'特別行政区',cap:'香港',     capPy:'Xiānggǎng',    pop:7.5,   popRank:29, area:0.1,   areaRank:34, cx:224,cy:224 },
+  { id:'macao',        name:'澳門特別行政区',  py:'Àomén',        type:'特別行政区',cap:'澳門',     capPy:'Àomén',        pop:0.7,   popRank:34, area:0.03,  areaRank:34, cx:218,cy:228 },
 ];
 
 const SHAPES = {
-  beijing:      'M35,28 L62,22 L72,33 L68,56 L56,67 L38,63 L28,52 L30,36 Z',
-  tianjin:      'M40,32 L62,27 L70,40 L66,60 L54,65 L38,58 L32,44 Z',
-  hebei:        'M18,18 L72,13 L82,28 L78,52 L60,72 L35,76 L16,62 L12,38 Z',
-  shanxi:       'M32,12 L62,10 L70,27 L67,62 L54,82 L33,84 L20,66 L18,32 Z',
-  neimenggu:    'M8,28 L28,12 L62,8 L92,18 L98,34 L82,46 L58,52 L36,56 L12,48 Z',
-  liaoning:     'M18,22 L66,18 L76,33 L72,56 L54,67 L27,70 L13,55 L10,36 Z',
-  jilin:        'M12,18 L70,16 L80,29 L75,56 L58,67 L28,70 L8,55 L6,33 Z',
-  heilongjiang: 'M12,12 L74,10 L90,26 L87,54 L68,71 L38,73 L10,57 L6,28 Z',
-  shanghai:     'M33,22 L66,19 L72,44 L66,71 L38,73 L26,54 L28,33 Z',
-  jiangsu:      'M18,12 L72,10 L80,27 L76,58 L60,76 L32,78 L16,60 L13,32 Z',
-  zhejiang:     'M20,18 L68,14 L76,32 L70,62 L48,77 L22,74 L12,52 L14,30 Z',
-  anhui:        'M28,12 L66,10 L74,26 L70,58 L52,77 L28,80 L15,60 L17,28 Z',
-  fujian:       'M18,16 L66,13 L76,30 L72,60 L52,77 L25,76 L12,56 L12,32 Z',
-  jiangxi:      'M22,13 L68,10 L76,26 L73,58 L54,80 L26,82 L12,62 L14,27 Z',
-  shandong:     'M12,22 L76,17 L83,36 L78,60 L52,72 L22,73 L8,57 L6,36 Z',
-  henan:        'M16,18 L73,15 L81,30 L77,60 L54,76 L22,78 L10,58 L12,32 Z',
-  hubei:        'M12,22 L75,19 L83,36 L78,60 L53,76 L18,73 L6,54 L8,36 Z',
-  hunan:        'M18,16 L68,13 L77,28 L73,58 L50,80 L22,82 L10,60 L12,28 Z',
-  guangdong:    'M10,20 L79,16 L86,33 L82,62 L58,80 L26,82 L8,62 L6,36 Z',
-  guangxi:      'M12,18 L76,15 L83,30 L79,60 L54,80 L19,82 L6,57 L8,33 Z',
-  hainan:       'M18,22 L72,19 L79,42 L73,70 L44,80 L20,74 L10,50 L12,33 Z',
-  chongqing:    'M16,18 L73,15 L81,30 L77,60 L53,76 L20,78 L8,57 L10,32 Z',
-  sichuan:      'M10,12 L79,9 L86,25 L83,57 L59,79 L22,81 L6,59 L8,27 Z',
-  guizhou:      'M15,16 L73,13 L81,28 L77,57 L54,76 L19,79 L8,56 L10,29 Z',
-  yunnan:       'M15,12 L73,9 L81,25 L78,57 L54,79 L19,82 L6,58 L9,26 Z',
-  xizang:       'M6,18 L80,13 L89,30 L86,62 L62,80 L22,83 L6,64 L3,36 Z',
-  shaanxi:      'M28,10 L62,8 L70,23 L66,58 L50,81 L26,84 L15,62 L17,25 Z',
-  gansu:        'M8,13 L85,10 L91,25 L87,53 L63,68 L22,70 L6,50 L6,26 Z',
-  qinghai:      'M6,16 L82,12 L88,28 L84,57 L60,76 L19,78 L5,58 L3,32 Z',
-  ningxia:      'M30,16 L63,13 L70,28 L66,63 L46,77 L29,77 L18,60 L20,30 Z',
-  xinjiang:     'M6,12 L82,9 L91,27 L87,57 L63,76 L19,79 L4,57 L3,28 Z',
-  taiwan:       'M30,15 L65,13 L73,35 L68,68 L45,82 L25,76 L16,52 L18,30 Z',
-  hongkong:     'M20,20 L70,18 L78,40 L73,68 L45,78 L20,72 L12,48 L14,32 Z',
-  macao:        'M25,20 L65,18 L73,42 L67,70 L42,80 L22,73 L14,49 L16,33 Z',
+  beijing:'M35,28 L62,22 L72,33 L68,56 L56,67 L38,63 L28,52 L30,36 Z',
+  tianjin:'M40,32 L62,27 L70,40 L66,60 L54,65 L38,58 L32,44 Z',
+  hebei:'M18,18 L72,13 L82,28 L78,52 L60,72 L35,76 L16,62 L12,38 Z',
+  shanxi:'M32,12 L62,10 L70,27 L67,62 L54,82 L33,84 L20,66 L18,32 Z',
+  neimenggu:'M8,28 L28,12 L62,8 L92,18 L98,34 L82,46 L58,52 L36,56 L12,48 Z',
+  liaoning:'M18,22 L66,18 L76,33 L72,56 L54,67 L27,70 L13,55 L10,36 Z',
+  jilin:'M12,18 L70,16 L80,29 L75,56 L58,67 L28,70 L8,55 L6,33 Z',
+  heilongjiang:'M12,12 L74,10 L90,26 L87,54 L68,71 L38,73 L10,57 L6,28 Z',
+  shanghai:'M33,22 L66,19 L72,44 L66,71 L38,73 L26,54 L28,33 Z',
+  jiangsu:'M18,12 L72,10 L80,27 L76,58 L60,76 L32,78 L16,60 L13,32 Z',
+  zhejiang:'M20,18 L68,14 L76,32 L70,62 L48,77 L22,74 L12,52 L14,30 Z',
+  anhui:'M28,12 L66,10 L74,26 L70,58 L52,77 L28,80 L15,60 L17,28 Z',
+  fujian:'M18,16 L66,13 L76,30 L72,60 L52,77 L25,76 L12,56 L12,32 Z',
+  jiangxi:'M22,13 L68,10 L76,26 L73,58 L54,80 L26,82 L12,62 L14,27 Z',
+  shandong:'M12,22 L76,17 L83,36 L78,60 L52,72 L22,73 L8,57 L6,36 Z',
+  henan:'M16,18 L73,15 L81,30 L77,60 L54,76 L22,78 L10,58 L12,32 Z',
+  hubei:'M12,22 L75,19 L83,36 L78,60 L53,76 L18,73 L6,54 L8,36 Z',
+  hunan:'M18,16 L68,13 L77,28 L73,58 L50,80 L22,82 L10,60 L12,28 Z',
+  guangdong:'M10,20 L79,16 L86,33 L82,62 L58,80 L26,82 L8,62 L6,36 Z',
+  guangxi:'M12,18 L76,15 L83,30 L79,60 L54,80 L19,82 L6,57 L8,33 Z',
+  hainan:'M18,22 L72,19 L79,42 L73,70 L44,80 L20,74 L10,50 L12,33 Z',
+  chongqing:'M16,18 L73,15 L81,30 L77,60 L53,76 L20,78 L8,57 L10,32 Z',
+  sichuan:'M10,12 L79,9 L86,25 L83,57 L59,79 L22,81 L6,59 L8,27 Z',
+  guizhou:'M15,16 L73,13 L81,28 L77,57 L54,76 L19,79 L8,56 L10,29 Z',
+  yunnan:'M15,12 L73,9 L81,25 L78,57 L54,79 L19,82 L6,58 L9,26 Z',
+  xizang:'M6,18 L80,13 L89,30 L86,62 L62,80 L22,83 L6,64 L3,36 Z',
+  shaanxi:'M28,10 L62,8 L70,23 L66,58 L50,81 L26,84 L15,62 L17,25 Z',
+  gansu:'M8,13 L85,10 L91,25 L87,53 L63,68 L22,70 L6,50 L6,26 Z',
+  qinghai:'M6,16 L82,12 L88,28 L84,57 L60,76 L19,78 L5,58 L3,32 Z',
+  ningxia:'M30,16 L63,13 L70,28 L66,63 L46,77 L29,77 L18,60 L20,30 Z',
+  xinjiang:'M6,12 L82,9 L91,27 L87,57 L63,76 L19,79 L4,57 L3,28 Z',
+  taiwan:'M30,15 L65,13 L73,35 L68,68 L45,82 L25,76 L16,52 L18,30 Z',
+  hongkong:'M20,20 L70,18 L78,40 L73,68 L45,78 L20,72 L12,48 L14,32 Z',
+  macao:'M25,20 L65,18 L73,42 L67,70 L42,80 L22,73 L14,49 L16,33 Z',
 };
 
-let currentIdx = 0;
-let synth = window.speechSynthesis;
-let isSpeaking = false;
-let deferredPrompt = null;
+// 中国国境（概略）
+const BORDER = 'M52,82 L60,70 L70,57 L80,49 L96,43 L110,36 L124,28 L138,22 L153,17 L168,15 L186,13 L206,12 L222,13 L240,16 L254,21 L267,26 L280,32 L292,40 L300,50 L304,62 L302,74 L296,84 L288,94 L283,102 L279,114 L276,124 L272,134 L268,144 L262,154 L256,164 L252,174 L250,185 L248,195 L247,205 L245,214 L241,224 L235,234 L227,242 L218,249 L208,256 L198,261 L186,264 L172,264 L158,260 L144,254 L131,247 L120,240 L109,231 L99,222 L89,213 L79,204 L68,193 L58,181 L50,168 L44,155 L40,142 L38,128 L38,114 L40,101 L45,90 L52,82 Z';
 
-// ── Build list ──
+// 省境ライン（主要のみ、破線で表示）
+const PROV_LINES = [
+  'M198,85 L196,110 L194,135 L192,160 L190,185',
+  'M220,112 L218,132 L215,155 L212,175 L210,195 L208,216',
+  'M240,125 L238,148 L235,165 L232,182 L228,202',
+  'M255,108 L252,122 L248,140 L244,158 L243,178',
+  'M272,88 L270,106 L266,125 L262,145',
+  'M80,120 L115,118 L150,118 L183,118 L218,116 L250,118 L280,116',
+  'M90,148 L125,147 L158,147 L190,145 L220,145 L248,147',
+  'M100,168 L135,167 L165,167 L196,167 L222,168 L248,168',
+  'M108,190 L140,188 L170,188 L200,188 L222,190 L246,192',
+  'M115,215 L150,214 L180,215 L206,215 L228,218',
+  'M148,18 L146,50 L143,82 L140,112',
+  'M183,14 L182,48 L180,80 L178,112 L176,142',
+];
+
+let currentIdx = 0;
+const synth = window.speechSynthesis;
+let deferredPrompt = null;
+let activeSpeakBtn = null;
+
 function buildList() {
   const grid = document.getElementById('province-grid');
   PROVINCES.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.className = 'prov-btn';
-    const short = p.name.replace(/省$|市$|特別行政区$|自治区$|壮族$|回族$|维吾尔$/, '').substring(0, 4);
+    const short = p.name.replace(/省$|市$|特別行政区$|自治区$|壮族$|回族$|维吾尔$/, '').substring(0,4);
     btn.innerHTML = `<span class="pn">${short}</span><span class="pp">${p.py.split(' ')[0]}</span>`;
     btn.onclick = () => showDetail(i);
     grid.appendChild(btn);
   });
 }
 
-// ── Show list ──
 function showList() {
   stopSpeaking();
   document.getElementById('detail-view').style.display = 'none';
   document.getElementById('list-view').style.display = 'block';
   document.getElementById('app-header').innerHTML = `
     <div class="header-flag">🇨🇳</div>
-    <div>
-      <div class="header-title">中国の省</div>
-      <div class="header-sub">全省・直轄市・自治区 — 発音学習</div>
-    </div>`;
+    <div><div class="header-title">中国の省</div>
+    <div class="header-sub">全省・直轄市・自治区 — 発音学習</div></div>`;
 }
 
-// ── Show detail ──
 function showDetail(idx) {
   stopSpeaking();
   currentIdx = idx;
@@ -439,10 +374,8 @@ function showDetail(idx) {
 
   document.getElementById('app-header').innerHTML = `
     <button class="header-back" onclick="showList()">&#8592;</button>
-    <div>
-      <div class="header-title" style="font-size:16px">${p.name}</div>
-      <div class="header-sub">${p.py}</div>
-    </div>`;
+    <div><div class="header-title" style="font-size:16px">${p.name}</div>
+    <div class="header-sub">${p.py}</div></div>`;
 
   document.getElementById('d-name').textContent = p.name;
   document.getElementById('d-type').textContent = p.type;
@@ -461,78 +394,101 @@ function showDetail(idx) {
 
   document.getElementById('shape-lbl').textContent = p.name;
   document.getElementById('detail-view').scrollTop = 0;
-
   drawMap(p);
   drawShape(p);
 
-  setTimeout(() => speakProvince(), 600);
+  // ③ 自動再生: 省名 → 800ms pause → 省都
+  setTimeout(() => speakBoth(), 600);
 }
 
-// ── Draw China map ──
+// ④ 地図（国境 + 省境ライン）
 function drawMap(prov) {
   const svg = document.getElementById('china-map');
   const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const mapBg = dark ? '#2a231c' : '#f0ede4';
-  const dotBase = dark ? 'rgba(240,232,220,0.22)' : 'rgba(26,20,16,0.14)';
+  const mapBg   = dark ? '#2a231c' : '#e8e4da';
+  const fillClr = dark ? 'rgba(30,24,18,0.5)' : 'rgba(250,248,243,0.7)';
+  const bdrClr  = dark ? 'rgba(240,232,220,0.55)' : 'rgba(26,20,16,0.65)';
+  const provClr = dark ? 'rgba(240,232,220,0.18)' : 'rgba(26,20,16,0.22)';
+  const dotBase = dark ? 'rgba(240,232,220,0.20)' : 'rgba(26,20,16,0.12)';
 
-  let dots = PROVINCES.map(p => {
+  const lines = PROV_LINES.map(d =>
+    `<path d="${d}" fill="none" stroke="${provClr}" stroke-width="0.7" stroke-dasharray="3,2.5"/>`
+  ).join('');
+
+  const dots = PROVINCES.map(p => {
     const sel = p.id === prov.id;
-    const r = sel ? 7 : 3.5;
-    const fill = sel ? '#c0392b' : dotBase;
-    const sw = sel ? '1.5' : '0';
-    return `<circle cx="${p.cx}" cy="${p.cy}" r="${r}" fill="${fill}" stroke="${sel?'#fff':'none'}" stroke-width="${sw}"/>`;
+    return `<circle cx="${p.cx}" cy="${p.cy}" r="${sel?7:3.5}" fill="${sel?'#c0392b':dotBase}" stroke="${sel?'#fff':'none'}" stroke-width="${sel?1.5:0}"/>`;
   }).join('');
 
   svg.innerHTML = `
     <rect width="400" height="370" fill="${mapBg}" rx="8"/>
+    <path d="${BORDER}" fill="${fillClr}" stroke="${bdrClr}" stroke-width="1.8" stroke-linejoin="round"/>
+    ${lines}
     ${dots}
     <circle cx="${prov.cx}" cy="${prov.cy}" r="7" fill="none" stroke="#c0392b" stroke-width="1.5" opacity="0.7">
       <animate attributeName="r" values="7;18;7" dur="2.2s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2.2s" repeatCount="indefinite"/>
     </circle>
-    <text x="${prov.cx}" y="${prov.cy - 20}" text-anchor="middle" font-size="10" fill="#c0392b" font-weight="700" font-family="'Noto Serif SC',serif">${prov.name.replace(/省$|市$/,'').substring(0,2)}</text>`;
+    <text x="${prov.cx}" y="${prov.cy-21}" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="700" font-family="'Noto Serif SC',serif">${prov.name.replace(/省$|市$/,'').substring(0,2)}</text>`;
 }
 
-// ── Draw province shape ──
 function drawShape(p) {
   const svg = document.getElementById('province-shape');
   const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const fill   = dark ? 'rgba(192,57,43,0.40)' : 'rgba(192,57,43,0.16)';
-  const stroke = '#c0392b';
+  const fill = dark ? 'rgba(192,57,43,0.40)' : 'rgba(192,57,43,0.16)';
   const d = SHAPES[p.id] || 'M18,18 L82,18 L82,82 L18,82 Z';
-  svg.innerHTML = `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  svg.innerHTML = `<path d="${d}" fill="${fill}" stroke="#c0392b" stroke-width="2.5" stroke-linejoin="round"/>`;
 }
 
-// ── Speech ──
-function speakProvince() {
+// ③ 両方まとめて発音（省名 → 800ms → 省都）
+function speakBoth() {
   if (!synth) return;
   stopSpeaking();
   const p = PROVINCES[currentIdx];
-  const btn = document.getElementById('btn-speak');
+  const provBtn = document.getElementById('speak-prov-btn');
+  const capBtn  = document.getElementById('speak-cap-btn');
 
-  const queue = [p.name, p.cap];
-  let qi = 0;
+  const u1 = new SpeechSynthesisUtterance(p.name);
+  u1.lang = 'zh-CN'; u1.rate = 0.82; u1.pitch = 1.0;
+  u1.onstart = () => { activeSpeakBtn = provBtn; provBtn && provBtn.classList.add('playing'); };
+  u1.onend   = () => {
+    provBtn && provBtn.classList.remove('playing');
+    activeSpeakBtn = null;
+    setTimeout(() => {
+      if (!synth) return;
+      const u2 = new SpeechSynthesisUtterance(p.cap);
+      u2.lang = 'zh-CN'; u2.rate = 0.82; u2.pitch = 1.0;
+      u2.onstart = () => { activeSpeakBtn = capBtn; capBtn && capBtn.classList.add('playing'); };
+      u2.onend   = () => { capBtn && capBtn.classList.remove('playing'); activeSpeakBtn = null; };
+      u2.onerror = () => { capBtn && capBtn.classList.remove('playing'); activeSpeakBtn = null; };
+      synth.speak(u2);
+    }, 800);
+  };
+  u1.onerror = () => { provBtn && provBtn.classList.remove('playing'); activeSpeakBtn = null; };
+  synth.speak(u1);
+}
 
-  function next() {
-    if (qi >= queue.length) { stopSpeaking(); return; }
-    const u = new SpeechSynthesisUtterance(queue[qi]);
-    u.lang = 'zh-CN';
-    u.rate = 0.82;
-    u.pitch = 1.0;
-    u.onstart  = () => { isSpeaking = true; btn.classList.add('speaking'); };
-    u.onend    = () => { qi++; setTimeout(next, 450); };
-    u.onerror  = () => stopSpeaking();
-    synth.speak(u);
-    qi++;
-  }
-  next();
+// ① 個別ボタン
+function speakOne(target) {
+  if (!synth) return;
+  stopSpeaking();
+  const p = PROVINCES[currentIdx];
+  const text = target === 'prov' ? p.name : p.cap;
+  const btn  = document.getElementById(target === 'prov' ? 'speak-prov-btn' : 'speak-cap-btn');
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN'; u.rate = 0.82; u.pitch = 1.0;
+  u.onstart = () => { activeSpeakBtn = btn; btn && btn.classList.add('playing'); };
+  u.onend   = () => { btn && btn.classList.remove('playing'); activeSpeakBtn = null; };
+  u.onerror = () => { btn && btn.classList.remove('playing'); activeSpeakBtn = null; };
+  synth.speak(u);
 }
 
 function stopSpeaking() {
   if (synth) synth.cancel();
-  isSpeaking = false;
-  const btn = document.getElementById('btn-speak');
-  if (btn) btn.classList.remove('speaking');
+  if (activeSpeakBtn) activeSpeakBtn.classList.remove('playing');
+  activeSpeakBtn = null;
+  document.querySelectorAll('.speak-icon-btn').forEach(b => b.classList.remove('playing'));
 }
 
 function nextRandom() {
@@ -542,38 +498,23 @@ function nextRandom() {
   showDetail(n);
 }
 
-// ── PWA Install ──
 window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const bar = document.getElementById('install-bar');
-  if (!localStorage.getItem('install-dismissed')) {
-    setTimeout(() => bar.classList.add('show'), 2000);
-  }
+  e.preventDefault(); deferredPrompt = e;
+  if (!localStorage.getItem('install-dismissed'))
+    setTimeout(() => document.getElementById('install-bar').classList.add('show'), 2000);
 });
-
 function doInstall() {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => {
-    deferredPrompt = null;
-    dismissInstall();
-  });
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissInstall(); });
 }
-
 function dismissInstall() {
   document.getElementById('install-bar').classList.remove('show');
-  localStorage.setItem('install-dismissed', '1');
+  localStorage.setItem('install-dismissed','1');
 }
-
 window.addEventListener('appinstalled', () => dismissInstall());
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-// ── Service Worker ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
-
-// ── Init ──
 buildList();
 </script>
 </body>
