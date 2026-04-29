@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>座標調整ツール</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #1a1410; color: #f0e8dc; min-height: 100vh; }
+  h1 { background: #c0392b; color: #fff; padding: 10px 16px; font-size: 16px; }
+  .layout { display: flex; gap: 0; height: calc(100vh - 42px); }
+  .map-panel { flex: 1; overflow: auto; background: #111; position: relative; }
+  .map-wrap { position: relative; display: inline-block; min-width: 100%; min-height: 200px; }
+  .map-wrap img { display: block; max-width: 100%; cursor: crosshair; }
+  .map-wrap svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; pointer-events: all; }
+  .list-panel { width: 200px; flex-shrink: 0; overflow-y: auto; background: #231e18; border-left: 1px solid rgba(255,255,255,0.1); }
+  .prov-item { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.07); cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .prov-item:hover { background: rgba(192,57,43,0.2); }
+  .prov-item.active { background: #c0392b; color: #fff; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; flex-shrink: 0; }
+  .prov-item.done .dot { background: #2ecc71; }
+  .prov-item.active .dot { background: #fff; }
+  .prov-name { font-weight: 600; font-size: 13px; }
+  .prov-cap { font-size: 11px; opacity: 0.7; }
+  .bottom { position: fixed; bottom: 0; left: 0; right: 200px; background: #2a231c; border-top: 1px solid rgba(255,255,255,0.15); padding: 8px 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; z-index: 10; }
+  .status { flex: 1; font-size: 13px; }
+  .status b { color: #f39c12; }
+  .btn { background: #c0392b; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; }
+  .btn:hover { background: #e74c3c; }
+  .btn.green { background: #27ae60; }
+  #output-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; }
+  #output-modal.show { display: flex; }
+  .modal-box { background: #231e18; border-radius: 10px; padding: 20px; max-width: 92vw; max-height: 85vh; overflow: auto; width: 600px; }
+  .modal-box h2 { margin-bottom: 10px; font-size: 15px; color: #f39c12; }
+  .modal-box textarea { width: 100%; height: 320px; background: #1a1410; color: #f0e8dc; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 10px; font-size: 11px; font-family: monospace; resize: vertical; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .img-error { color: #e74c3c; padding: 20px; font-size: 14px; line-height: 1.8; }
+  .instructions { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.4); border-radius: 8px; padding: 10px 12px; font-size: 12px; line-height: 1.7; margin: 8px; }
+  .instructions b { color: #f39c12; }
+  #img-status { padding: 6px 12px; font-size: 12px; color: #a89880; }
+</style>
+</head>
+<body>
+<h1>🗺 省都座標 調整ツール — ChinaProvince</h1>
+<div class="layout">
+  <div class="map-panel" id="map-panel">
+    <div class="instructions">
+      <b>使い方：</b> 右のリストで省を選択 → 地図上の省都をクリック → 自動で次の省へ進みます。<br>
+      全部終わったら「座標をコピー」を押してください。
+    </div>
+    <div id="img-status">地図を読み込み中...</div>
+    <div class="map-wrap" id="map-wrap">
+      <img id="map-img" src="images/chinamap04.jpg" alt="中国地図"
+           onload="onImgLoad()" onerror="onImgError()">
+      <svg id="overlay" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+  <div class="list-panel" id="prov-list"></div>
+</div>
+
+<div class="bottom">
+  <div class="status" id="status">省を選択してから地図をクリックしてください</div>
+  <button class="btn" onclick="undoLast()">↩ 戻す</button>
+  <button class="btn" onclick="skipCurrent()">→ スキップ</button>
+  <button class="btn green" onclick="showOutput()">座標をコピー</button>
+</div>
+
+<div id="output-modal">
+  <div class="modal-box">
+    <h2>📋 座標データ（このデータを私（Claude）に貼り付けてください）</h2>
+    <textarea id="output-text" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn green" onclick="copyOutput()">クリップボードにコピー</button>
+      <button class="btn" onclick="document.getElementById('output-modal').classList.remove('show')">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROVINCES = [
+  { id:'heilongjiang', name:'黑龙江', cap:'哈尔滨',   capX:530, capY:125 },
+  { id:'jilin',        name:'吉林',   cap:'长春',     capX:520, capY:155 },
+  { id:'liaoning',     name:'辽宁',   cap:'沈阳',     capX:490, capY:185 },
+  { id:'beijing',      name:'北京',   cap:'北京',     capX:438, capY:190 },
+  { id:'tianjin',      name:'天津',   cap:'天津',     capX:455, capY:205 },
+  { id:'hebei',        name:'河北',   cap:'石家庄',   capX:415, capY:240 },
+  { id:'shanxi',       name:'山西',   cap:'太原',     capX:385, capY:235 },
+  { id:'neimenggu',    name:'内蒙古', cap:'呼和浩特', capX:390, capY:185 },
+  { id:'shandong',     name:'山东',   cap:'济南',     capX:450, capY:258 },
+  { id:'jiangsu',      name:'江苏',   cap:'南京',     capX:455, capY:300 },
+  { id:'shanghai',     name:'上海',   cap:'上海',     capX:500, capY:315 },
+  { id:'zhejiang',     name:'浙江',   cap:'杭州',     capX:478, capY:330 },
+  { id:'anhui',        name:'安徽',   cap:'合肥',     capX:450, capY:312 },
+  { id:'fujian',       name:'福建',   cap:'福州',     capX:480, capY:368 },
+  { id:'henan',        name:'河南',   cap:'郑州',     capX:430, capY:272 },
+  { id:'hubei',        name:'湖北',   cap:'武汉',     capX:435, capY:315 },
+  { id:'hunan',        name:'湖南',   cap:'长沙',     capX:418, capY:355 },
+  { id:'jiangxi',      name:'江西',   cap:'南昌',     capX:452, capY:345 },
+  { id:'guangdong',    name:'广东',   cap:'广州',     capX:428, capY:408 },
+  { id:'guangxi',      name:'广西',   cap:'南宁',     capX:385, capY:425 },
+  { id:'hainan',       name:'海南',   cap:'海口',     capX:408, capY:462 },
+  { id:'chongqing',    name:'重庆',   cap:'重庆',     capX:368, capY:340 },
+  { id:'sichuan',      name:'四川',   cap:'成都',     capX:315, capY:348 },
+  { id:'guizhou',      name:'贵州',   cap:'贵阳',     capX:372, capY:388 },
+  { id:'yunnan',       name:'云南',   cap:'昆明',     capX:318, capY:405 },
+  { id:'xizang',       name:'西藏',   cap:'拉萨',     capX:240, capY:355 },
+  { id:'shaanxi',      name:'陕西',   cap:'西安',     capX:383, capY:285 },
+  { id:'gansu',        name:'甘肃',   cap:'兰州',     capX:320, capY:278 },
+  { id:'qinghai',      name:'青海',   cap:'西宁',     capX:270, capY:285 },
+  { id:'ningxia',      name:'宁夏',   cap:'銀川',     capX:360, capY:245 },
+  { id:'xinjiang',     name:'新疆',   cap:'乌鲁木齐', capX:195, capY:195 },
+  { id:'taiwan',       name:'台湾',   cap:'台北',     capX:508, capY:382 },
+  { id:'hongkong',     name:'香港',   cap:'香港',     capX:453, capY:428 },
+  { id:'macao',        name:'澳門',   cap:'澳門',     capX:443, capY:432 },
+];
+
+const adjusted = {};
+PROVINCES.forEach(p => { adjusted[p.id] = { capX: p.capX, capY: p.capY, done: false }; });
+
+let currentId = PROVINCES[0].id;
+let imgNW = 750, imgNH = 675;
+const img = document.getElementById('map-img');
+const overlay = document.getElementById('overlay');
+
+function onImgLoad() {
+  imgNW = img.naturalWidth;
+  imgNH = img.naturalHeight;
+  overlay.setAttribute('viewBox', `0 0 ${imgNW} ${imgNH}`);
+  document.getElementById('img-status').textContent = `地図サイズ: ${imgNW}×${imgNH}px — クリックして座標を設定してください`;
+  renderDots();
+}
+
+function onImgError() {
+  document.getElementById('img-status').innerHTML =
+    `<span style="color:#e74c3c">⚠ 地図画像が読み込めません。</span><br>
+     <small>このファイルはGitHub Pagesで開く必要があります。<br>
+     URL: <b>https://superdaisy2025.github.io/ChinaProvince/adjust.html</b></small>`;
+}
+
+// クリック座標取得
+overlay.addEventListener('click', e => {
+  if (!currentId) return;
+  const rect = img.getBoundingClientRect();
+  const x = Math.round((e.clientX - rect.left) / rect.width  * imgNW);
+  const y = Math.round((e.clientY - rect.top)  / rect.height * imgNH);
+  adjusted[currentId] = { capX: x, capY: y, done: true };
+
+  // 次の未完了省へ自動移動
+  const cur = PROVINCES.findIndex(p => p.id === currentId);
+  const next = PROVINCES.find((p, i) => i > cur && !adjusted[p.id].done)
+            || PROVINCES.find(p => !adjusted[p.id].done);
+  renderList();
+  renderDots();
+  if (next) selectProvince(next.id);
+  else updateStatus(); // 全完了
+});
+
+function selectProvince(id) {
+  currentId = id;
+  renderList();
+  renderDots();
+  updateStatus();
+  const el = document.getElementById('item-' + id);
+  if (el) el.scrollIntoView({ block: 'nearest' });
+}
+
+function renderList() {
+  document.getElementById('prov-list').innerHTML = PROVINCES.map(p => `
+    <div class="prov-item ${p.id===currentId?'active':''} ${adjusted[p.id].done?'done':''}"
+         id="item-${p.id}" onclick="selectProvince('${p.id}')">
+      <div class="dot"></div>
+      <div>
+        <div class="prov-name">${p.name}</div>
+        <div class="prov-cap">→ ${p.cap}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderDots() {
+  if (!imgNW) return;
+  const r = Math.max(6, imgNW * 0.011);
+  let html = '';
+  PROVINCES.forEach(p => {
+    const a = adjusted[p.id];
+    const isCur  = p.id === currentId;
+    const isDone = a.done;
+    const color  = isCur ? '#f39c12' : isDone ? '#2ecc71' : 'rgba(100,100,100,0.6)';
+    const sw     = isCur ? r*0.35 : r*0.25;
+    const rr     = isCur ? r * 1.5 : r;
+    html += `<circle cx="${a.capX}" cy="${a.capY}" r="${rr}"
+      fill="${color}" stroke="#fff" stroke-width="${sw}"
+      style="cursor:pointer" onclick="selectProvince('${p.id}')"/>`;
+    if (isCur || isDone) {
+      const fs = Math.max(11, imgNW * 0.016);
+      html += `<text x="${a.capX}" y="${a.capY - rr - 3}"
+        text-anchor="middle" font-size="${fs}" font-weight="700"
+        fill="${color}" stroke="#000" stroke-width="2.5" paint-order="stroke"
+        font-family="sans-serif">${p.cap}</text>`;
+    }
+  });
+  overlay.innerHTML = html;
+}
+
+function updateStatus() {
+  const done = PROVINCES.filter(p => adjusted[p.id].done).length;
+  const cur  = PROVINCES.find(p => p.id === currentId);
+  document.getElementById('status').innerHTML =
+    `<b>${cur ? cur.name + ' → ' + cur.cap : '完了！'}</b>　✅ ${done}/${PROVINCES.length}`;
+}
+
+function undoLast() {
+  const orig = PROVINCES.find(p => p.id === currentId);
+  if (orig) adjusted[currentId] = { capX: orig.capX, capY: orig.capY, done: false };
+  renderList(); renderDots(); updateStatus();
+}
+
+function skipCurrent() {
+  const i = PROVINCES.findIndex(p => p.id === currentId);
+  selectProvince(PROVINCES[(i + 1) % PROVINCES.length].id);
+}
+
+function showOutput() {
+  const lines = PROVINCES.map(p => {
+    const a = adjusted[p.id];
+    return `${p.id}: capX=${a.capX}, capY=${a.capY}`;
+  }).join('\n');
+  document.getElementById('output-text').value = lines;
+  document.getElementById('output-modal').classList.add('show');
+}
+
+function copyOutput() {
+  const ta = document.getElementById('output-text');
+  ta.select();
+  document.execCommand('copy');
+  alert('コピーしました！\nこのデータをClaudeに貼り付けてください。');
+}
+
+renderList();
+updateStatus();
+// 画像がキャッシュ済みの場合はonloadが呼ばれないことがあるので確認
+if (img.complete && img.naturalWidth > 0) onImgLoad();
+</script>
+</body>
+</html>
