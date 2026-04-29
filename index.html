@@ -13,10 +13,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
     :root {
       --bg:#faf8f3; --bg2:#f0ede4; --bg3:#e8e4da; --card:#ffffff;
-      --text:#1a1410; --text2:#6b5f52; --text3:#9e9186; --red:#c0392b;
+      --text:#1a1410; --text2:#6b5f52; --text3:#9e9186;
+      --red:#c0392b; --green:#27ae60;
       --border:rgba(26,20,16,0.10); --border2:rgba(26,20,16,0.18);
       --safe-top:env(safe-area-inset-top,0px); --safe-bot:env(safe-area-inset-bottom,0px);
     }
@@ -28,43 +29,26 @@
       }
     }
     html,body { height:100%; overflow:hidden; }
-    body {
-      font-family:'Noto Sans SC',system-ui,sans-serif;
-      background:var(--bg); color:var(--text);
-      height:100dvh; display:flex; flex-direction:column;
-    }
+    body { font-family:'Noto Sans SC',system-ui,sans-serif; background:var(--bg); color:var(--text); height:100dvh; display:flex; flex-direction:column; }
 
     /* HEADER */
-    .header {
-      background:var(--red); color:#fff;
-      padding:10px 14px; padding-top:calc(10px + var(--safe-top));
-      display:flex; align-items:center; gap:10px;
-      flex-shrink:0; user-select:none;
-    }
+    .header { background:var(--red); color:#fff; padding:10px 14px; padding-top:calc(10px + var(--safe-top)); display:flex; align-items:center; gap:10px; flex-shrink:0; }
     .header-flag { font-size:22px; line-height:1; }
     .header-title { font-size:18px; font-weight:700; font-family:'Noto Serif SC',serif; letter-spacing:0.06em; flex:1; }
     .header-sub { font-size:13px; opacity:0.85; margin-top:2px; }
-    .header-back {
-      background:rgba(255,255,255,0.22); border:none; color:#fff;
-      width:34px; height:34px; border-radius:9px; cursor:pointer; font-size:18px;
-      display:flex; align-items:center; justify-content:center;
-      transition:background 0.15s; flex-shrink:0;
-    }
+    .header-back { background:rgba(255,255,255,0.22); border:none; color:#fff; width:34px; height:34px; border-radius:9px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .header-back:active { background:rgba(255,255,255,0.38); }
 
     /* LIST */
-    #list-view {
-      flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
-      padding:8px 8px calc(8px + var(--safe-bot));
-    }
+    #list-view { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 8px calc(8px + var(--safe-bot)); display:flex; flex-direction:column; gap:8px; }
+    .quiz-banner { background:linear-gradient(135deg,#1a1410 0%,#2e1a10 100%); border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; border:1.5px solid rgba(192,57,43,0.4); transition:transform 0.1s,border-color 0.15s; }
+    .quiz-banner:active { transform:scale(0.98); }
+    .quiz-banner-icon { font-size:32px; flex-shrink:0; }
+    .quiz-banner-title { font-size:17px; font-weight:700; color:#f0e8dc; font-family:'Noto Serif SC',serif; }
+    .quiz-banner-sub { font-size:12px; color:#a89880; margin-top:3px; }
+    .quiz-banner-arrow { font-size:20px; color:#c0392b; }
     .province-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
-    .prov-btn {
-      background:var(--card); border:1px solid var(--border); border-radius:10px;
-      padding:10px 3px 9px; cursor:pointer; text-align:center;
-      transition:transform 0.12s,background 0.12s;
-      display:flex; flex-direction:column; align-items:center; gap:3px;
-      touch-action:manipulation;
-    }
+    .prov-btn { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 3px 9px; cursor:pointer; text-align:center; transition:transform 0.12s,background 0.12s; display:flex; flex-direction:column; align-items:center; gap:3px; touch-action:manipulation; }
     .prov-btn:active { transform:scale(0.94); background:var(--red); border-color:var(--red); }
     .prov-btn:active .pn,.prov-btn:active .pp { color:#fff !important; }
     .pn { font-size:14px; font-family:'Noto Serif SC',serif; color:var(--text); font-weight:600; line-height:1.2; }
@@ -72,101 +56,93 @@
 
     /* DETAIL */
     #detail-view { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; }
-
-    /* ── 地図エリア：画像の上にSVGドットを重ねる ── */
-    .map-area {
-      background:var(--bg2);
-      padding:10px;
-      position:relative;
-    }
-    .map-container {
-      position:relative;
-      width:100%;
-      border-radius:8px;
-      overflow:hidden;
-      background:#d0cfc8;
-    }
-    .map-container img {
-      width:100%;
-      height:auto;
-      display:block;
-    }
-    /* SVGオーバーレイ：画像と完全に重なる */
-    .map-overlay {
-      position:absolute;
-      top:0; left:0; width:100%; height:100%;
-      pointer-events:none;
-    }
+    .map-area { background:var(--bg2); padding:10px; }
+    .map-container { position:relative; width:100%; border-radius:8px; overflow:hidden; background:#d0cfc8; }
+    .map-container img { width:100%; height:auto; display:block; }
+    .map-overlay { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
     .map-lbl { font-size:12px; color:var(--text3); text-align:center; margin-top:5px; }
-
-    /* DETAIL BODY */
     .detail-body { padding:14px 14px 6px; }
-
     .name-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     .d-name { font-family:'Noto Serif SC',serif; font-size:30px; font-weight:700; color:var(--text); line-height:1.1; }
     .d-type { font-size:13px; color:var(--text3); background:var(--bg2); border-radius:20px; padding:3px 10px; white-space:nowrap; }
-    .d-py { font-size:16px; color:var(--text2); margin-top:4px; letter-spacing:0.02em; }
-
-    /* 発音アイコン */
-    .speak-icon-btn {
-      background:none; border:none; cursor:pointer; padding:3px;
-      display:inline-flex; align-items:center; justify-content:center;
-      touch-action:manipulation; flex-shrink:0; transition:transform 0.1s;
-    }
+    .d-py { font-size:16px; color:var(--text2); margin-top:4px; }
+    .speak-icon-btn { background:none; border:none; cursor:pointer; padding:3px; display:inline-flex; align-items:center; justify-content:center; touch-action:manipulation; flex-shrink:0; transition:transform 0.1s; }
     .speak-icon-btn:active { transform:scale(0.82); }
     .speak-icon-btn svg { display:block; }
-    .speak-icon-btn .bar1,.speak-icon-btn .bar2,.speak-icon-btn .bar3 {
-      transform-box:fill-box; transform-origin:center bottom;
-    }
+    .speak-icon-btn .bar1,.speak-icon-btn .bar2,.speak-icon-btn .bar3 { transform-box:fill-box; transform-origin:center bottom; }
     .speak-icon-btn.playing .bar1 { animation:sb1 0.7s ease-in-out infinite; }
     .speak-icon-btn.playing .bar2 { animation:sb2 0.7s ease-in-out infinite 0.15s; }
     .speak-icon-btn.playing .bar3 { animation:sb3 0.7s ease-in-out infinite 0.30s; }
     @keyframes sb1 { 0%,100%{transform:scaleY(0.45)} 50%{transform:scaleY(0.9)} }
     @keyframes sb2 { 0%,100%{transform:scaleY(0.5)}  50%{transform:scaleY(1.0)} }
     @keyframes sb3 { 0%,100%{transform:scaleY(0.45)} 50%{transform:scaleY(0.8)} }
-
-    /* 省会 */
-    .cap-block {
-      margin-top:12px; background:var(--bg2); border-radius:10px;
-      padding:11px 13px; display:flex; align-items:center; gap:10px;
-    }
+    .cap-block { margin-top:12px; background:var(--bg2); border-radius:10px; padding:11px 13px; display:flex; align-items:center; gap:10px; }
     .cap-icon { font-size:20px; flex-shrink:0; }
     .cap-label { font-size:13px; color:var(--text3); margin-bottom:3px; }
     .cap-name-row { display:flex; align-items:center; gap:8px; }
-    .cap-name { font-family:'Noto Serif SC',serif; font-size:22px; font-weight:600; line-height:1.2; }
+    .cap-name { font-family:'Noto Serif SC',serif; font-size:22px; font-weight:600; }
     .cap-py { font-size:14px; color:var(--text2); margin-top:2px; }
-
-    /* stats */
     .stats-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
     .stat-card { background:var(--bg2); border-radius:10px; padding:10px 12px; }
     .stat-lbl { font-size:13px; color:var(--text3); margin-bottom:4px; }
     .stat-rank { font-size:24px; font-weight:700; color:var(--red); line-height:1; }
-    .stat-val { font-size:13px; color:var(--text2); margin-top:3px; line-height:1.4; }
+    .stat-val { font-size:13px; color:var(--text2); margin-top:3px; }
     .rank-bar { height:4px; background:var(--border); border-radius:2px; margin-top:7px; overflow:hidden; }
     .rank-fill { height:100%; background:var(--red); border-radius:2px; width:0; transition:width 0.7s cubic-bezier(0.4,0,0.2,1); }
-
-    /* ACTIONS */
     .actions { display:flex; gap:8px; padding:12px 14px calc(12px + var(--safe-bot)); }
-    .btn-nav {
-      flex:1; background:var(--card); border:1px solid var(--border2); color:var(--text);
-      border-radius:11px; padding:14px 13px; font-size:15px; font-weight:500;
-      cursor:pointer; transition:background 0.12s,transform 0.1s;
-      touch-action:manipulation; white-space:nowrap; text-align:center;
-    }
+    .btn-nav { flex:1; background:var(--card); border:1px solid var(--border2); color:var(--text); border-radius:11px; padding:14px 13px; font-size:15px; font-weight:500; cursor:pointer; transition:background 0.12s,transform 0.1s; touch-action:manipulation; text-align:center; }
     .btn-nav:active { background:var(--bg3); transform:scale(0.96); }
 
-    /* install toast */
-    #install-bar {
-      position:fixed; bottom:calc(0px + var(--safe-bot)); left:0; right:0;
-      background:#1a1410; color:#f0e8dc; padding:12px 16px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      font-size:14px; z-index:200; transform:translateY(100%); transition:transform 0.35s ease;
-    }
+    /* QUIZ */
+    #quiz-view { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; flex-direction:column; }
+    .quiz-progress { padding:10px 14px 6px; }
+    .quiz-progress-bar-wrap { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+    .quiz-progress-bar { height:100%; background:var(--red); border-radius:3px; transition:width 0.4s ease; }
+    .quiz-progress-labels { display:flex; justify-content:space-between; margin-top:5px; font-size:12px; color:var(--text3); }
+    .wrong-count { color:#e67e22; font-weight:600; }
+    .quiz-map-area { padding:0 10px 8px; }
+    .quiz-question { text-align:center; padding:8px 14px 10px; font-size:15px; color:var(--text2); font-weight:500; }
+    .quiz-question b { color:var(--text); font-size:17px; }
+    .quiz-answer-area { padding:0 14px; }
+    .quiz-reveal-btn { width:100%; background:var(--red); color:#fff; border:none; border-radius:12px; padding:16px; font-size:17px; font-weight:700; cursor:pointer; font-family:'Noto Serif SC',serif; letter-spacing:0.05em; transition:opacity 0.15s,transform 0.1s; touch-action:manipulation; }
+    .quiz-reveal-btn:active { opacity:0.8; transform:scale(0.98); }
+    .quiz-answer-card { background:var(--card); border:1.5px solid var(--border2); border-radius:12px; padding:16px; display:none; }
+    .quiz-answer-card.show { display:block; }
+    .qa-name { font-family:'Noto Serif SC',serif; font-size:28px; font-weight:700; color:var(--text); }
+    .qa-py { font-size:15px; color:var(--text2); margin-top:3px; }
+    .qa-type { display:inline-block; font-size:12px; color:var(--text3); background:var(--bg2); border-radius:20px; padding:2px 9px; margin-top:5px; }
+    .qa-cap-row { margin-top:12px; background:var(--bg2); border-radius:9px; padding:10px 12px; display:flex; align-items:center; gap:8px; }
+    .qa-cap-label { font-size:12px; color:var(--text3); margin-bottom:2px; }
+    .qa-cap-name { font-family:'Noto Serif SC',serif; font-size:20px; font-weight:600; }
+    .qa-cap-py { font-size:13px; color:var(--text2); margin-top:1px; }
+    .quiz-judge-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+    .btn-correct { background:var(--green); color:#fff; border:none; border-radius:11px; padding:15px 10px; font-size:16px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; transition:opacity 0.15s,transform 0.1s; touch-action:manipulation; }
+    .btn-correct:active { opacity:0.8; transform:scale(0.97); }
+    .btn-wrong { background:#e67e22; color:#fff; border:none; border-radius:11px; padding:15px 10px; font-size:16px; font-weight:700; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; transition:opacity 0.15s,transform 0.1s; touch-action:manipulation; }
+    .btn-wrong:active { opacity:0.8; transform:scale(0.97); }
+    .btn-judge-sub { font-size:11px; font-weight:400; opacity:0.85; }
+    .quiz-finish { display:none; flex-direction:column; align-items:center; justify-content:center; padding:30px 24px; text-align:center; flex:1; gap:14px; }
+    .quiz-finish.show { display:flex; }
+    .quiz-finish-icon { font-size:56px; }
+    .quiz-finish-title { font-family:'Noto Serif SC',serif; font-size:24px; font-weight:700; }
+    .quiz-finish-sub { font-size:15px; color:var(--text2); line-height:1.7; white-space:pre-line; }
+    .quiz-finish-stats { background:var(--bg2); border-radius:12px; padding:14px 20px; width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .quiz-stat { text-align:center; }
+    .quiz-stat-num { font-size:28px; font-weight:700; }
+    .quiz-stat-lbl { font-size:12px; color:var(--text3); margin-top:2px; }
+    .quiz-finish-btns { display:flex; gap:8px; width:100%; flex-wrap:wrap; }
+    .quiz-finish-btn { flex:1; border:none; border-radius:11px; padding:14px; font-size:15px; font-weight:600; cursor:pointer; touch-action:manipulation; min-width:120px; }
+    .quiz-finish-btn.retry { background:var(--red); color:#fff; }
+    .quiz-finish-btn.retry-wrong { background:#e67e22; color:#fff; }
+    .quiz-finish-btn.home { background:var(--card); border:1px solid var(--border2); color:var(--text); }
+    .quiz-nav { display:flex; gap:8px; padding:10px 14px calc(10px + var(--safe-bot)); flex-shrink:0; }
+    .quiz-nav-btn { flex:1; background:var(--card); border:1px solid var(--border2); color:var(--text); border-radius:10px; padding:12px; font-size:14px; cursor:pointer; text-align:center; touch-action:manipulation; }
+    .quiz-nav-btn:active { background:var(--bg3); }
+
+    /* install */
+    #install-bar { position:fixed; bottom:calc(0px + var(--safe-bot)); left:0; right:0; background:#1a1410; color:#f0e8dc; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:14px; z-index:200; transform:translateY(100%); transition:transform 0.35s ease; }
     #install-bar.show { transform:translateY(0); }
-    #install-bar button {
-      background:var(--red); color:#fff; border:none; border-radius:8px;
-      padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
-    }
+    #install-bar button { background:var(--red); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; }
     #install-dismiss { background:transparent !important; color:#a89880 !important; padding:7px 8px !important; }
   </style>
 </head>
@@ -180,36 +156,37 @@
   </div>
 </div>
 
+<!-- LIST -->
 <div id="list-view">
+  <div class="quiz-banner" onclick="startQuiz()">
+    <div class="quiz-banner-icon">🗺</div>
+    <div class="quiz-banner-text">
+      <div class="quiz-banner-title">クイズモード</div>
+      <div class="quiz-banner-sub">地図の赤点がどの省か当てよう！</div>
+    </div>
+    <div class="quiz-banner-arrow">›</div>
+  </div>
   <div class="province-grid" id="province-grid"></div>
 </div>
 
+<!-- DETAIL -->
 <div id="detail-view">
-  <!-- 地図：画像 + SVGオーバーレイ -->
   <div class="map-area">
-    <div class="map-container" id="map-container">
+    <div class="map-container">
       <img id="map-img" src="images/chinamap04.jpg" alt="中国地図">
-      <!-- viewBoxは画像の実サイズ(px)に合わせる。JavaScriptで動的に設定 -->
-      <svg class="map-overlay" id="map-overlay" viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg class="map-overlay" id="map-overlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
-    <div class="map-lbl">🔴 省庁所在地（省都）　🟡 省の重心</div>
+    <div class="map-lbl">🔴 省都の位置</div>
   </div>
-
   <div class="detail-body">
     <div class="name-row">
       <span class="d-name" id="d-name"></span>
       <button class="speak-icon-btn" id="speak-prov-btn" onclick="speakOne('prov')">
-        <svg width="30" height="30" viewBox="0 0 30 30">
-          <circle cx="15" cy="15" r="14" fill="#c0392b"/>
-          <rect class="bar1" x="8"  y="11" width="3.5" height="8"  rx="1.75" fill="#fff"/>
-          <rect class="bar2" x="13" y="9"  width="3.5" height="12" rx="1.75" fill="#fff"/>
-          <rect class="bar3" x="18" y="10" width="3.5" height="10" rx="1.75" fill="#fff"/>
-        </svg>
+        <svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="14" fill="#c0392b"/><rect class="bar1" x="8" y="11" width="3.5" height="8" rx="1.75" fill="#fff"/><rect class="bar2" x="13" y="9" width="3.5" height="12" rx="1.75" fill="#fff"/><rect class="bar3" x="18" y="10" width="3.5" height="10" rx="1.75" fill="#fff"/></svg>
       </button>
       <span class="d-type" id="d-type"></span>
     </div>
     <div class="d-py" id="d-py"></div>
-
     <div class="cap-block">
       <div class="cap-icon">🏛</div>
       <div style="flex:1;min-width:0">
@@ -217,18 +194,12 @@
         <div class="cap-name-row">
           <span class="cap-name" id="d-cap"></span>
           <button class="speak-icon-btn" id="speak-cap-btn" onclick="speakOne('cap')">
-            <svg width="26" height="26" viewBox="0 0 30 30">
-              <circle cx="15" cy="15" r="14" fill="#c0392b"/>
-              <rect class="bar1" x="8"  y="11" width="3.5" height="8"  rx="1.75" fill="#fff"/>
-              <rect class="bar2" x="13" y="9"  width="3.5" height="12" rx="1.75" fill="#fff"/>
-              <rect class="bar3" x="18" y="10" width="3.5" height="10" rx="1.75" fill="#fff"/>
-            </svg>
+            <svg width="26" height="26" viewBox="0 0 30 30"><circle cx="15" cy="15" r="14" fill="#c0392b"/><rect class="bar1" x="8" y="11" width="3.5" height="8" rx="1.75" fill="#fff"/><rect class="bar2" x="13" y="9" width="3.5" height="12" rx="1.75" fill="#fff"/><rect class="bar3" x="18" y="10" width="3.5" height="10" rx="1.75" fill="#fff"/></svg>
           </button>
         </div>
         <div class="cap-py" id="d-cap-py"></div>
       </div>
     </div>
-
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-lbl">人口ランク（全国）</div>
@@ -244,10 +215,64 @@
       </div>
     </div>
   </div>
-
   <div class="actions">
     <button class="btn-nav" onclick="showList()">← 一覧</button>
     <button class="btn-nav" onclick="nextRandom()">次へ →</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-view">
+  <div class="quiz-progress">
+    <div class="quiz-progress-bar-wrap"><div class="quiz-progress-bar" id="q-progress-bar" style="width:0%"></div></div>
+    <div class="quiz-progress-labels">
+      <span id="q-progress-text">0 / 0</span>
+      <span class="wrong-count" id="q-wrong-label"></span>
+    </div>
+  </div>
+  <div class="quiz-map-area">
+    <div class="map-container">
+      <img id="q-map-img" src="images/chinamap04.jpg" alt="中国地図">
+      <svg class="map-overlay" id="q-map-overlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+  <div class="quiz-question" id="q-question"><b>この省はどこでしょう？</b></div>
+  <div class="quiz-answer-area">
+    <button class="quiz-reveal-btn" id="q-reveal-btn" onclick="revealAnswer()">答えを見る</button>
+    <div class="quiz-answer-card" id="q-answer-card">
+      <div class="qa-name" id="qa-name"></div>
+      <div class="qa-py"   id="qa-py"></div>
+      <div class="qa-type" id="qa-type"></div>
+      <div class="qa-cap-row">
+        <div style="font-size:18px;flex-shrink:0">🏛</div>
+        <div>
+          <div class="qa-cap-label">省会（省都）</div>
+          <div class="qa-cap-name" id="qa-cap"></div>
+          <div class="qa-cap-py"   id="qa-cap-py"></div>
+        </div>
+      </div>
+      <div class="quiz-judge-row">
+        <button class="btn-correct" onclick="judgeAnswer(true)">✓ 正解<span class="btn-judge-sub">次の問題へ</span></button>
+        <button class="btn-wrong"   onclick="judgeAnswer(false)">✗ 間違い<span class="btn-judge-sub">再出題を増やす</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="quiz-finish" id="quiz-finish">
+    <div class="quiz-finish-icon"  id="qf-icon">🎉</div>
+    <div class="quiz-finish-title" id="qf-title">ラウンド終了！</div>
+    <div class="quiz-finish-sub"   id="qf-sub"></div>
+    <div class="quiz-finish-stats">
+      <div class="quiz-stat"><div class="quiz-stat-num" id="qf-correct" style="color:var(--green)">0</div><div class="quiz-stat-lbl">✓ 正解</div></div>
+      <div class="quiz-stat"><div class="quiz-stat-num" id="qf-wrong"   style="color:#e67e22">0</div><div class="quiz-stat-lbl">✗ 間違い</div></div>
+    </div>
+    <div class="quiz-finish-btns">
+      <button class="quiz-finish-btn retry-wrong" id="qf-retry-wrong" onclick="retryWrong()" style="display:none">間違いのみ再挑戦</button>
+      <button class="quiz-finish-btn retry" onclick="startQuiz()">全問やり直す</button>
+      <button class="quiz-finish-btn home"  onclick="showList()">一覧へ</button>
+    </div>
+  </div>
+  <div class="quiz-nav" id="quiz-nav">
+    <button class="quiz-nav-btn" onclick="showList()">← 一覧へ戻る</button>
   </div>
 </div>
 
@@ -260,84 +285,82 @@
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────
-// 座標系について：
-//   chinamap04.jpg のサイズは概ね 750×675px 程度と推定。
-//   viewBox="0 0 750 675" に設定し、各省の座標を
-//   実際の地図画像に合わせてチューニングしています。
-//
-//   cx/cy = 省の重心（黄色点）
-//   capX/capY = 省都の位置（赤点）
-//   ※ 画像を見ながら微調整が必要な場合は後述の調整モードを使用
-// ─────────────────────────────────────────────────────────
-
-// 地図画像の論理サイズ（viewBoxに使う）
-const MAP_W = 750;
-const MAP_H = 675;
-
+// ══════════════════════════════════════════════════════
+// データ（座標はadjust.htmlで調整済みの実ピクセル値）
+// ══════════════════════════════════════════════════════
 const PROVINCES = [
-  // 東北
-  { id:'heilongjiang', name:'黑龙江省',       py:'Hēilóngjiāng', type:'省',        cap:'哈尔滨',   capPy:'Hāěrbīn',      pop:31.5,  popRank:21, area:47.3,  areaRank:6,  cx:560, cy:80,  capX:530, capY:125 },
-  { id:'jilin',        name:'吉林省',          py:'Jílín',        type:'省',        cap:'长春',     capPy:'Chángchūn',    pop:24.1,  popRank:22, area:18.7,  areaRank:15, cx:540, cy:140, capX:520, capY:155 },
-  { id:'liaoning',     name:'辽宁省',          py:'Liáoníng',     type:'省',        cap:'沈阳',     capPy:'Shěnyáng',     pop:42.6,  popRank:14, area:14.8,  areaRank:21, cx:505, cy:185, capX:490, capY:185 },
-  // 华北
-  { id:'beijing',      name:'北京市',          py:'Běijīng',      type:'直轄市',    cap:'北京',     capPy:'Běijīng',      pop:21.5,  popRank:26, area:1.7,   areaRank:31, cx:438, cy:190, capX:438, capY:190 },
-  { id:'tianjin',      name:'天津市',          py:'Tiānjīn',      type:'直轄市',    cap:'天津',     capPy:'Tiānjīn',      pop:13.6,  popRank:27, area:1.2,   areaRank:32, cx:455, cy:205, capX:455, capY:205 },
-  { id:'hebei',        name:'河北省',          py:'Héběi',        type:'省',        cap:'石家庄',   capPy:'Shíjiāzhuāng', pop:74.7,  popRank:6,  area:18.8,  areaRank:14, cx:430, cy:225, capX:415, capY:240 },
-  { id:'shanxi',       name:'山西省',          py:'Shānxī',       type:'省',        cap:'太原',     capPy:'Tàiyuán',      pop:37.3,  popRank:19, area:15.6,  areaRank:19, cx:390, cy:240, capX:385, capY:235 },
-  { id:'neimenggu',    name:'内蒙古自治区',    py:'Nèi Měnggǔ',   type:'自治区',    cap:'呼和浩特', capPy:'Hūhéhàotè',    pop:24.0,  popRank:23, area:118.3, areaRank:3,  cx:390, cy:155, capX:390, capY:185 },
-  // 华东
-  { id:'shandong',     name:'山东省',          py:'Shāndōng',     type:'省',        cap:'济南',     capPy:'Jǐnán',        pop:101.5, popRank:2,  area:15.8,  areaRank:20, cx:460, cy:265, capX:450, capY:258 },
-  { id:'jiangsu',      name:'江苏省',          py:'Jiāngsū',      type:'省',        cap:'南京',     capPy:'Nánjīng',      pop:84.7,  popRank:4,  area:10.7,  areaRank:24, cx:475, cy:300, capX:455, capY:300 },
-  { id:'shanghai',     name:'上海市',          py:'Shànghǎi',     type:'直轄市',    cap:'上海',     capPy:'Shànghǎi',     pop:24.9,  popRank:25, area:0.6,   areaRank:33, cx:500, cy:315, capX:500, capY:315 },
-  { id:'zhejiang',     name:'浙江省',          py:'Zhèjiāng',     type:'省',        cap:'杭州',     capPy:'Hángzhōu',     pop:64.6,  popRank:8,  area:10.2,  areaRank:25, cx:490, cy:340, capX:478, capY:330 },
-  { id:'anhui',        name:'安徽省',          py:'Ānhuī',        type:'省',        cap:'合肥',     capPy:'Héféi',        pop:61.0,  popRank:9,  area:14.0,  areaRank:22, cx:455, cy:315, capX:450, capY:312 },
-  { id:'fujian',       name:'福建省',          py:'Fújiàn',       type:'省',        cap:'福州',     capPy:'Fúzhōu',       pop:41.5,  popRank:15, area:12.1,  areaRank:23, cx:480, cy:380, capX:480, capY:368 },
-  // 华中
-  { id:'henan',        name:'河南省',          py:'Hénán',        type:'省',        cap:'郑州',     capPy:'Zhèngzhōu',    pop:99.4,  popRank:3,  area:16.7,  areaRank:17, cx:430, cy:278, capX:430, capY:272 },
-  { id:'hubei',        name:'湖北省',          py:'Húběi',        type:'省',        cap:'武汉',     capPy:'Wǔhàn',        pop:58.2,  popRank:10, area:18.6,  areaRank:16, cx:420, cy:318, capX:435, capY:315 },
-  { id:'hunan',        name:'湖南省',          py:'Húnán',        type:'省',        cap:'长沙',     capPy:'Chángshā',     pop:66.4,  popRank:7,  area:21.2,  areaRank:13, cx:415, cy:360, capX:418, capY:355 },
-  { id:'jiangxi',      name:'江西省',          py:'Jiāngxī',      type:'省',        cap:'南昌',     capPy:'Nánchāng',     pop:45.2,  popRank:13, area:16.7,  areaRank:18, cx:455, cy:355, capX:452, capY:345 },
-  // 华南
-  { id:'guangdong',    name:'广东省',          py:'Guǎngdōng',    type:'省',        cap:'广州',     capPy:'Guǎngzhōu',    pop:126.0, popRank:1,  area:18.0,  areaRank:15, cx:435, cy:415, capX:428, capY:408 },
-  { id:'guangxi',      name:'广西壮族自治区',  py:'Guǎngxī',      type:'自治区',    cap:'南宁',     capPy:'Nánníng',      pop:50.1,  popRank:12, area:23.6,  areaRank:10, cx:390, cy:420, capX:385, capY:425 },
-  { id:'hainan',       name:'海南省',          py:'Hǎinán',       type:'省',        cap:'海口',     capPy:'Hǎikǒu',       pop:10.1,  popRank:28, area:3.5,   areaRank:29, cx:408, cy:468, capX:408, capY:462 },
-  // 西南
-  { id:'chongqing',    name:'重庆市',          py:'Chóngqìng',    type:'直轄市',    cap:'重庆',     capPy:'Chóngqìng',    pop:32.0,  popRank:20, area:8.2,   areaRank:27, cx:368, cy:340, capX:368, capY:340 },
-  { id:'sichuan',      name:'四川省',          py:'Sìchuān',      type:'省',        cap:'成都',     capPy:'Chéngdū',      pop:83.7,  popRank:5,  area:48.6,  areaRank:5,  cx:320, cy:345, capX:315, capY:348 },
-  { id:'guizhou',      name:'贵州省',          py:'Guìzhōu',      type:'省',        cap:'贵阳',     capPy:'Guìyáng',      pop:38.5,  popRank:17, area:17.6,  areaRank:16, cx:370, cy:390, capX:372, capY:388 },
-  { id:'yunnan',       name:'云南省',          py:'Yúnnán',       type:'省',        cap:'昆明',     capPy:'Kūnmíng',      pop:47.2,  popRank:13, area:39.4,  areaRank:8,  cx:308, cy:410, capX:318, capY:405 },
-  { id:'xizang',       name:'西藏自治区',      py:'Xīzàng',       type:'自治区',    cap:'拉萨',     capPy:'Lāsà',         pop:3.6,   popRank:33, area:122.8, areaRank:2,  cx:200, cy:360, capX:240, capY:355 },
-  // 西北
-  { id:'shaanxi',      name:'陕西省',          py:'Shǎnxī',       type:'省',        cap:'西安',     capPy:"Xī'ān",        pop:39.5,  popRank:16, area:20.6,  areaRank:12, cx:385, cy:280, capX:383, capY:285 },
-  { id:'gansu',        name:'甘肃省',          py:'Gānsù',        type:'省',        cap:'兰州',     capPy:'Lánzhōu',      pop:25.5,  popRank:22, area:42.6,  areaRank:7,  cx:305, cy:268, capX:320, capY:278 },
-  { id:'qinghai',      name:'青海省',          py:'Qīnghǎi',      type:'省',        cap:'西宁',     capPy:'Xīníng',       pop:5.9,   popRank:31, area:72.2,  areaRank:4,  cx:255, cy:290, capX:270, capY:285 },
-  { id:'ningxia',      name:'宁夏回族自治区',  py:'Níngxià',      type:'自治区',    cap:'銀川',     capPy:'Yínchuān',     pop:7.2,   popRank:30, area:6.6,   areaRank:28, cx:363, cy:248, capX:360, capY:245 },
-  { id:'xinjiang',     name:'新疆维吾尔自治区',py:'Xīnjiāng',     type:'自治区',    cap:'乌鲁木齐', capPy:'Wūlǔmùqí',    pop:25.9,  popRank:21, area:166.0, areaRank:1,  cx:150, cy:215, capX:195, capY:195 },
-  // その他
-  { id:'taiwan',       name:'台湾省',          py:'Táiwān',       type:'省',        cap:'台北',     capPy:'Táiběi',       pop:23.4,  popRank:25, area:3.6,   areaRank:30, cx:510, cy:395, capX:508, capY:382 },
-  { id:'hongkong',     name:'香港特別行政区',  py:'Xiānggǎng',    type:'特別行政区',cap:'香港',     capPy:'Xiānggǎng',    pop:7.5,   popRank:29, area:0.1,   areaRank:34, cx:453, cy:428, capX:453, capY:428 },
-  { id:'macao',        name:'澳門特別行政区',  py:'Àomén',        type:'特別行政区',cap:'澳門',     capPy:'Àomén',        pop:0.7,   popRank:34, area:0.03,  areaRank:34, cx:443, cy:432, capX:443, capY:432 },
+  { id:'heilongjiang', name:'黑龙江省',        py:'Hēilóngjiāng', type:'省',        cap:'哈尔滨',   capPy:'Hāěrbīn',      pop:31.5,  popRank:21, area:47.3,  areaRank:6,  capX:2311, capY:428  },
+  { id:'jilin',        name:'吉林省',           py:'Jílín',        type:'省',        cap:'长春',     capPy:'Chángchūn',    pop:24.1,  popRank:22, area:18.7,  areaRank:15, capX:2283, capY:559  },
+  { id:'liaoning',     name:'辽宁省',           py:'Liáoníng',     type:'省',        cap:'沈阳',     capPy:'Shěnyáng',     pop:42.6,  popRank:14, area:14.8,  areaRank:21, capX:2233, capY:723  },
+  { id:'beijing',      name:'北京市',           py:'Běijīng',      type:'直轄市',    cap:'北京',     capPy:'Běijīng',      pop:21.5,  popRank:26, area:1.7,   areaRank:31, capX:1941, capY:821  },
+  { id:'tianjin',      name:'天津市',           py:'Tiānjīn',      type:'直轄市',    cap:'天津',     capPy:'Tiānjīn',      pop:13.6,  popRank:27, area:1.2,   areaRank:32, capX:1986, capY:881  },
+  { id:'hebei',        name:'河北省',           py:'Héběi',        type:'省',        cap:'石家庄',   capPy:'Shíjiāzhuāng', pop:74.7,  popRank:6,  area:18.8,  areaRank:14, capX:1846, capY:929  },
+  { id:'shanxi',       name:'山西省',           py:'Shānxī',       type:'省',        cap:'太原',     capPy:'Tàiyuán',      pop:37.3,  popRank:19, area:15.6,  areaRank:19, capX:1751, capY:981  },
+  { id:'neimenggu',    name:'内蒙古自治区',     py:'Nèi Měnggǔ',   type:'自治区',    cap:'呼和浩特', capPy:'Hūhéhàotè',    pop:24.0,  popRank:23, area:118.3, areaRank:3,  capX:1750, capY:819  },
+  { id:'shandong',     name:'山东省',           py:'Shāndōng',     type:'省',        cap:'济南',     capPy:'Jǐnán',        pop:101.5, popRank:2,  area:15.8,  areaRank:20, capX:1992, capY:1052 },
+  { id:'jiangsu',      name:'江苏省',           py:'Jiāngsū',      type:'省',        cap:'南京',     capPy:'Nánjīng',      pop:84.7,  popRank:4,  area:10.7,  areaRank:24, capX:2102, capY:1305 },
+  { id:'shanghai',     name:'上海市',           py:'Shànghǎi',     type:'直轄市',    cap:'上海',     capPy:'Shànghǎi',     pop:24.9,  popRank:25, area:0.6,   areaRank:33, capX:2224, capY:1345 },
+  { id:'zhejiang',     name:'浙江省',           py:'Zhèjiāng',     type:'省',        cap:'杭州',     capPy:'Hángzhōu',     pop:64.6,  popRank:8,  area:10.2,  areaRank:25, capX:2146, capY:1397 },
+  { id:'anhui',        name:'安徽省',           py:'Ānhuī',        type:'省',        cap:'合肥',     capPy:'Héféi',        pop:61.0,  popRank:9,  area:14.0,  areaRank:22, capX:2012, capY:1336 },
+  { id:'fujian',       name:'福建省',           py:'Fújiàn',       type:'省',        cap:'福州',     capPy:'Fúzhōu',       pop:41.5,  popRank:15, area:12.1,  areaRank:23, capX:2118, capY:1651 },
+  { id:'henan',        name:'河南省',           py:'Hénán',        type:'省',        cap:'郑州',     capPy:'Zhèngzhōu',    pop:99.4,  popRank:3,  area:16.7,  areaRank:17, capX:1841, capY:1127 },
+  { id:'hubei',        name:'湖北省',           py:'Húběi',        type:'省',        cap:'武汉',     capPy:'Wǔhàn',        pop:58.2,  popRank:10, area:18.6,  areaRank:16, capX:1858, capY:1402 },
+  { id:'hunan',        name:'湖南省',           py:'Húnán',        type:'省',        cap:'长沙',     capPy:'Chángshā',     pop:66.4,  popRank:7,  area:21.2,  areaRank:13, capX:1783, capY:1547 },
+  { id:'jiangxi',      name:'江西省',           py:'Jiāngxī',      type:'省',        cap:'南昌',     capPy:'Nánchāng',     pop:45.2,  popRank:13, area:16.7,  areaRank:18, capX:1958, capY:1529 },
+  { id:'guangdong',    name:'广东省',           py:'Guǎngdōng',    type:'省',        cap:'广州',     capPy:'Guǎngzhōu',    pop:126.0, popRank:1,  area:18.0,  areaRank:15, capX:1843, capY:1827 },
+  { id:'guangxi',      name:'广西壮族自治区',   py:'Guǎngxī',      type:'自治区',    cap:'南宁',     capPy:'Nánníng',      pop:50.1,  popRank:12, area:23.6,  areaRank:10, capX:1576, capY:1858 },
+  { id:'hainan',       name:'海南省',           py:'Hǎinán',       type:'省',        cap:'海口',     capPy:'Hǎikǒu',       pop:10.1,  popRank:28, area:3.5,   areaRank:29, capX:1670, capY:2048 },
+  { id:'chongqing',    name:'重庆市',           py:'Chóngqìng',    type:'直轄市',    cap:'重庆',     capPy:'Chóngqìng',    pop:32.0,  popRank:20, area:8.2,   areaRank:27, capX:1506, capY:1471 },
+  { id:'sichuan',      name:'四川省',           py:'Sìchuān',      type:'省',        cap:'成都',     capPy:'Chéngdū',      pop:83.7,  popRank:5,  area:48.6,  areaRank:5,  capX:1362, capY:1410 },
+  { id:'guizhou',      name:'贵州省',           py:'Guìzhōu',      type:'省',        cap:'贵阳',     capPy:'Guìyáng',      pop:38.5,  popRank:17, area:17.6,  areaRank:16, capX:1475, capY:1641 },
+  { id:'yunnan',       name:'云南省',           py:'Yúnnán',       type:'省',        cap:'昆明',     capPy:'Kūnmíng',      pop:47.2,  popRank:13, area:39.4,  areaRank:8,  capX:1252, capY:1721 },
+  { id:'xizang',       name:'西藏自治区',       py:'Xīzàng',       type:'自治区',    cap:'拉萨',     capPy:'Lāsà',         pop:3.6,   popRank:33, area:122.8, areaRank:2,  capX:735,  capY:1418 },
+  { id:'shaanxi',      name:'陕西省',           py:'Shǎnxī',       type:'省',        cap:'西安',     capPy:"Xī'ān",        pop:39.5,  popRank:16, area:20.6,  areaRank:12, capX:1586, capY:1199 },
+  { id:'gansu',        name:'甘肃省',           py:'Gānsù',        type:'省',        cap:'兰州',     capPy:'Lánzhōu',      pop:25.5,  popRank:22, area:42.6,  areaRank:7,  capX:1368, capY:1075 },
+  { id:'qinghai',      name:'青海省',           py:'Qīnghǎi',      type:'省',        cap:'西宁',     capPy:'Xīníng',       pop:5.9,   popRank:31, area:72.2,  areaRank:4,  capX:1233, capY:1057 },
+  { id:'ningxia',      name:'宁夏回族自治区',   py:'Níngxià',      type:'自治区',    cap:'銀川',     capPy:'Yínchuān',     pop:7.2,   popRank:30, area:6.6,   areaRank:28, capX:1485, capY:954  },
+  { id:'xinjiang',     name:'新疆维吾尔自治区', py:'Xīnjiāng',     type:'自治区',    cap:'乌鲁木齐', capPy:'Wūlǔmùqí',    pop:25.9,  popRank:21, area:166.0, areaRank:1,  capX:740,  capY:562  },
+  { id:'taiwan',       name:'台湾省',           py:'Táiwān',       type:'省',        cap:'台北',     capPy:'Táiběi',       pop:23.4,  popRank:25, area:3.6,   areaRank:30, capX:2265, capY:1711 },
+  { id:'hongkong',     name:'香港特別行政区',   py:'Xiānggǎng',    type:'特別行政区',cap:'香港',     capPy:'Xiānggǎng',    pop:7.5,   popRank:29, area:0.1,   areaRank:34, capX:1886, capY:1896 },
+  { id:'macao',        name:'澳門特別行政区',   py:'Àomén',        type:'特別行政区',cap:'澳門',     capPy:'Àomén',        pop:0.7,   popRank:34, area:0.03,  areaRank:34, capX:1846, capY:1906 },
 ];
 
+// ══════════════════════════════════════════════════════
+// 地図オーバーレイ：画像のnaturalサイズをviewBoxに使う
+// ══════════════════════════════════════════════════════
+let imgNW = 2411, imgNH = 2148; // 推定値（onload後に更新）
+
+function setupOverlay(imgEl, svgEl) {
+  function sync() {
+    if (imgEl.naturalWidth) {
+      imgNW = imgEl.naturalWidth;
+      imgNH = imgEl.naturalHeight;
+    }
+    svgEl.setAttribute('viewBox', `0 0 ${imgNW} ${imgNH}`);
+  }
+  imgEl.addEventListener('load', sync);
+  if (imgEl.complete && imgEl.naturalWidth) sync();
+}
+
+const mapImg     = document.getElementById('map-img');
+const mapOverlay = document.getElementById('map-overlay');
+const qMapImg    = document.getElementById('q-map-img');
+const qMapOvl    = document.getElementById('q-map-overlay');
+setupOverlay(mapImg,  mapOverlay);
+setupOverlay(qMapImg, qMapOvl);
+
+// ドットサイズ：画像幅の1.4%（最小12px）
+function dotR() { return Math.max(12, imgNW * 0.014); }
+function fontSize() { return Math.max(18, imgNW * 0.022); }
+
+// ══════════════════════════════════════════════════════
+// 通常モード
+// ══════════════════════════════════════════════════════
 let currentIdx = 0;
 const synth = window.speechSynthesis;
-let deferredPrompt = null;
 let activeSpeakBtn = null;
+let deferredPrompt = null;
 
-// 画像ロード後にviewBoxを実サイズに合わせる
-const mapImg = document.getElementById('map-img');
-const mapOverlay = document.getElementById('map-overlay');
-
-function syncOverlay() {
-  const w = mapImg.naturalWidth  || MAP_W;
-  const h = mapImg.naturalHeight || MAP_H;
-  mapOverlay.setAttribute('viewBox', `0 0 ${w} ${h}`);
-}
-mapImg.addEventListener('load', syncOverlay);
-if (mapImg.complete) syncOverlay();
-
-// ── LIST ──
 function buildList() {
   const grid = document.getElementById('province-grid');
   PROVINCES.forEach((p, i) => {
@@ -352,8 +375,9 @@ function buildList() {
 
 function showList() {
   stopSpeaking();
-  document.getElementById('detail-view').style.display = 'none';
-  document.getElementById('list-view').style.display = 'block';
+  document.getElementById('detail-view').style.display  = 'none';
+  document.getElementById('quiz-view').style.display    = 'none';
+  document.getElementById('list-view').style.display    = 'flex';
   document.getElementById('app-header').innerHTML = `
     <div class="header-flag">🇨🇳</div>
     <div><div class="header-title">中国の省</div>
@@ -364,113 +388,44 @@ function showDetail(idx) {
   stopSpeaking();
   currentIdx = idx;
   const p = PROVINCES[idx];
-
-  document.getElementById('list-view').style.display = 'none';
+  document.getElementById('list-view').style.display   = 'none';
+  document.getElementById('quiz-view').style.display   = 'none';
   document.getElementById('detail-view').style.display = 'block';
-
   document.getElementById('app-header').innerHTML = `
     <button class="header-back" onclick="showList()">&#8592;</button>
     <div><div class="header-title" style="font-size:16px">${p.name}</div>
     <div class="header-sub">${p.py}</div></div>`;
-
-  document.getElementById('d-name').textContent = p.name;
-  document.getElementById('d-type').textContent = p.type;
-  document.getElementById('d-py').textContent = p.py;
-  document.getElementById('d-cap').textContent = p.cap;
-  document.getElementById('d-cap-py').textContent = p.capPy;
+  document.getElementById('d-name').textContent    = p.name;
+  document.getElementById('d-type').textContent    = p.type;
+  document.getElementById('d-py').textContent      = p.py;
+  document.getElementById('d-cap').textContent     = p.cap;
+  document.getElementById('d-cap-py').textContent  = p.capPy;
   document.getElementById('d-pop-rank').textContent = p.popRank + '位';
-  document.getElementById('d-pop-val').textContent = '人口 約' + p.pop + '百万人';
+  document.getElementById('d-pop-val').textContent  = '人口 約' + p.pop + '百万人';
   document.getElementById('d-area-rank').textContent = p.areaRank + '位';
-  document.getElementById('d-area-val').textContent = '面積 約' + p.area + '万km²';
-
+  document.getElementById('d-area-val').textContent  = '面積 約' + p.area + '万km²';
   requestAnimationFrame(() => {
-    document.getElementById('d-pop-bar').style.width  = ((34 - p.popRank)  / 33 * 100) + '%';
-    document.getElementById('d-area-bar').style.width = ((34 - p.areaRank) / 33 * 100) + '%';
+    document.getElementById('d-pop-bar').style.width  = ((34-p.popRank)/33*100)+'%';
+    document.getElementById('d-area-bar').style.width = ((34-p.areaRank)/33*100)+'%';
   });
-
   document.getElementById('detail-view').scrollTop = 0;
-  drawDots(p);
+  drawDetailDot(p);
   setTimeout(() => speakBoth(), 600);
 }
 
-// ── 地図に赤点（省都）・黄点（省重心）を描画 ──
-function drawDots(p) {
-  // 画像の実サイズを取得してスケール係数を計算
-  const imgW = mapImg.naturalWidth  || MAP_W;
-  const imgH = mapImg.naturalHeight || MAP_H;
-
-  // 座標はMAP_W×MAP_H基準で入力→実画像サイズにスケール
-  const sx = imgW / MAP_W;
-  const sy = imgH / MAP_H;
-
-  const capX = p.capX * sx;
-  const capY = p.capY * sy;
-
-  // 点のサイズも画像サイズに合わせてスケール
-  const dotR = Math.max(8, imgW * 0.013);
-  const pulseR = dotR * 2.2;
-
+function drawDetailDot(p) {
+  const r  = dotR();
+  const fs = fontSize();
   mapOverlay.innerHTML = `
-    <!-- 省都：赤点＋パルスアニメ -->
-    <circle cx="${capX}" cy="${capY}" r="${pulseR}" fill="none" stroke="#c0392b" stroke-width="${dotR*0.25}" opacity="0.5">
-      <animate attributeName="r" values="${dotR};${pulseR*1.5};${dotR}" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.7;0.0;0.7" dur="2s" repeatCount="indefinite"/>
+    <circle cx="${p.capX}" cy="${p.capY}" r="${r*2.2}" fill="none" stroke="#c0392b" stroke-width="${r*0.2}">
+      <animate attributeName="r" values="${r};${r*3};${r}" dur="2.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.0;0.8" dur="2.2s" repeatCount="indefinite"/>
     </circle>
-    <circle cx="${capX}" cy="${capY}" r="${dotR}" fill="#c0392b" stroke="#fff" stroke-width="${dotR*0.28}"/>
-    <!-- 省都ラベル -->
-    <text x="${capX}" y="${capY - dotR - 4}" text-anchor="middle"
-      font-size="${Math.max(14, imgW * 0.022)}" font-weight="700"
-      fill="#c0392b" stroke="#fff" stroke-width="3" paint-order="stroke"
-      font-family="'Noto Serif SC',serif">${p.cap}</text>
-  `;
-}
-
-// ── Speech ──
-function speakBoth() {
-  if (!synth) return;
-  stopSpeaking();
-  const p = PROVINCES[currentIdx];
-  const provBtn = document.getElementById('speak-prov-btn');
-  const capBtn  = document.getElementById('speak-cap-btn');
-
-  const u1 = new SpeechSynthesisUtterance(p.name);
-  u1.lang = 'zh-CN'; u1.rate = 0.82; u1.pitch = 1.0;
-  u1.onstart = () => { activeSpeakBtn = provBtn; provBtn && provBtn.classList.add('playing'); };
-  u1.onend   = () => {
-    provBtn && provBtn.classList.remove('playing');
-    activeSpeakBtn = null;
-    setTimeout(() => {
-      const u2 = new SpeechSynthesisUtterance(p.cap);
-      u2.lang = 'zh-CN'; u2.rate = 0.82; u2.pitch = 1.0;
-      u2.onstart = () => { activeSpeakBtn = capBtn; capBtn && capBtn.classList.add('playing'); };
-      u2.onend   = () => { capBtn && capBtn.classList.remove('playing'); activeSpeakBtn = null; };
-      u2.onerror = () => { capBtn && capBtn.classList.remove('playing'); activeSpeakBtn = null; };
-      synth.speak(u2);
-    }, 800);
-  };
-  u1.onerror = () => { provBtn && provBtn.classList.remove('playing'); activeSpeakBtn = null; };
-  synth.speak(u1);
-}
-
-function speakOne(target) {
-  if (!synth) return;
-  stopSpeaking();
-  const p = PROVINCES[currentIdx];
-  const text = target === 'prov' ? p.name : p.cap;
-  const btn  = document.getElementById(target === 'prov' ? 'speak-prov-btn' : 'speak-cap-btn');
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'zh-CN'; u.rate = 0.82; u.pitch = 1.0;
-  u.onstart = () => { activeSpeakBtn = btn; btn && btn.classList.add('playing'); };
-  u.onend   = () => { btn && btn.classList.remove('playing'); activeSpeakBtn = null; };
-  u.onerror = () => { btn && btn.classList.remove('playing'); activeSpeakBtn = null; };
-  synth.speak(u);
-}
-
-function stopSpeaking() {
-  if (synth) synth.cancel();
-  if (activeSpeakBtn) activeSpeakBtn.classList.remove('playing');
-  activeSpeakBtn = null;
-  document.querySelectorAll('.speak-icon-btn').forEach(b => b.classList.remove('playing'));
+    <circle cx="${p.capX}" cy="${p.capY}" r="${r}" fill="#c0392b" stroke="#fff" stroke-width="${r*0.28}"/>
+    <text x="${p.capX}" y="${p.capY - r - 5}" text-anchor="middle"
+      font-size="${fs}" font-weight="700"
+      fill="#c0392b" stroke="#fff" stroke-width="4" paint-order="stroke"
+      font-family="'Noto Serif SC',serif">${p.cap}</text>`;
 }
 
 function nextRandom() {
@@ -480,7 +435,201 @@ function nextRandom() {
   showDetail(n);
 }
 
-// ── PWA ──
+// ── Speech ──
+function speakBoth() {
+  if (!synth) return; stopSpeaking();
+  const p  = PROVINCES[currentIdx];
+  const pb = document.getElementById('speak-prov-btn');
+  const cb = document.getElementById('speak-cap-btn');
+  const u1 = new SpeechSynthesisUtterance(p.name);
+  u1.lang='zh-CN'; u1.rate=0.82;
+  u1.onstart = () => { activeSpeakBtn=pb; pb&&pb.classList.add('playing'); };
+  u1.onend   = () => {
+    pb&&pb.classList.remove('playing'); activeSpeakBtn=null;
+    setTimeout(() => {
+      const u2 = new SpeechSynthesisUtterance(p.cap);
+      u2.lang='zh-CN'; u2.rate=0.82;
+      u2.onstart = () => { activeSpeakBtn=cb; cb&&cb.classList.add('playing'); };
+      u2.onend   = () => { cb&&cb.classList.remove('playing'); activeSpeakBtn=null; };
+      u2.onerror = () => { cb&&cb.classList.remove('playing'); activeSpeakBtn=null; };
+      synth.speak(u2);
+    }, 800);
+  };
+  u1.onerror = () => { pb&&pb.classList.remove('playing'); activeSpeakBtn=null; };
+  synth.speak(u1);
+}
+
+function speakOne(target) {
+  if (!synth) return; stopSpeaking();
+  const p   = PROVINCES[currentIdx];
+  const text = target==='prov' ? p.name : p.cap;
+  const btn  = document.getElementById(target==='prov' ? 'speak-prov-btn' : 'speak-cap-btn');
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='zh-CN'; u.rate=0.82;
+  u.onstart = () => { activeSpeakBtn=btn; btn&&btn.classList.add('playing'); };
+  u.onend   = () => { btn&&btn.classList.remove('playing'); activeSpeakBtn=null; };
+  u.onerror = () => { btn&&btn.classList.remove('playing'); activeSpeakBtn=null; };
+  synth.speak(u);
+}
+
+function stopSpeaking() {
+  if (synth) synth.cancel();
+  if (activeSpeakBtn) activeSpeakBtn.classList.remove('playing');
+  activeSpeakBtn = null;
+  document.querySelectorAll('.speak-icon-btn').forEach(b=>b.classList.remove('playing'));
+}
+
+// ══════════════════════════════════════════════════════
+// クイズモード（単語帳方式）
+// ══════════════════════════════════════════════════════
+let quizQueue   = [];   // 出題ID配列（間違い分は末尾に追加）
+let quizIdx     = 0;    // 現在のキュー位置
+let wrongSet    = {};   // id → 間違い回数
+let qCorrect    = 0;
+let qWrong      = 0;
+
+function shuffle(arr) {
+  for (let i = arr.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz() {
+  wrongSet = {}; qCorrect = 0; qWrong = 0;
+  quizQueue = shuffle(PROVINCES.map(p => p.id));
+  quizIdx = 0;
+  _showQuizView();
+  _nextQuestion();
+}
+
+function retryWrong() {
+  const ids = Object.keys(wrongSet);
+  if (!ids.length) { startQuiz(); return; }
+  qCorrect = 0; qWrong = 0;
+  quizQueue = shuffle([...ids]);
+  wrongSet  = {};
+  quizIdx   = 0;
+  _showQuizView();
+  _nextQuestion();
+}
+
+function _showQuizView() {
+  stopSpeaking();
+  document.getElementById('list-view').style.display   = 'none';
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('quiz-view').style.display   = 'flex';
+  document.getElementById('quiz-finish').classList.remove('show');
+  document.getElementById('quiz-nav').style.display    = 'flex';
+  document.getElementById('app-header').innerHTML = `
+    <button class="header-back" onclick="showList()">&#8592;</button>
+    <div><div class="header-title" style="font-size:17px">🗺 クイズモード</div>
+    <div class="header-sub">地図の赤点はどの省？</div></div>`;
+}
+
+function _nextQuestion() {
+  if (quizIdx >= quizQueue.length) { _showFinish(); return; }
+  const id = quizQueue[quizIdx];
+  const p  = PROVINCES.find(x => x.id === id);
+  if (!p) { quizIdx++; _nextQuestion(); return; }
+
+  // 進捗
+  const total = quizQueue.length;
+  const pct   = (quizIdx / total) * 100;
+  document.getElementById('q-progress-bar').style.width = pct + '%';
+  document.getElementById('q-progress-text').textContent = `${quizIdx+1} / ${total}`;
+  const wc = Object.keys(wrongSet).length;
+  document.getElementById('q-wrong-label').textContent = wc ? `✗ 苦手: ${wc}省` : '';
+
+  // 地図ドット（省都位置、ラベルなし）
+  _drawQuizDot(p, false);
+
+  // 答えリセット
+  document.getElementById('q-reveal-btn').style.display = 'block';
+  document.getElementById('q-answer-card').classList.remove('show');
+  document.getElementById('quiz-view').scrollTop = 0;
+}
+
+function _drawQuizDot(p, showLabel) {
+  const r  = dotR();
+  const fs = fontSize();
+  let html = `
+    <circle cx="${p.capX}" cy="${p.capY}" r="${r*2.5}" fill="none" stroke="#c0392b" stroke-width="${r*0.22}">
+      <animate attributeName="r" values="${r};${r*3.2};${r}" dur="1.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0;0.8" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${p.capX}" cy="${p.capY}" r="${r}" fill="#c0392b" stroke="#fff" stroke-width="${r*0.3}"/>`;
+  if (showLabel) {
+    html += `<text x="${p.capX}" y="${p.capY - r - 5}" text-anchor="middle"
+      font-size="${fs}" font-weight="700"
+      fill="#c0392b" stroke="#fff" stroke-width="4" paint-order="stroke"
+      font-family="'Noto Serif SC',serif">${p.name.replace(/省$|市$/,'')}</text>`;
+  }
+  qMapOvl.innerHTML = html;
+}
+
+function revealAnswer() {
+  const id = quizQueue[quizIdx];
+  const p  = PROVINCES.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('q-reveal-btn').style.display = 'none';
+  document.getElementById('qa-name').textContent   = p.name;
+  document.getElementById('qa-py').textContent     = p.py;
+  document.getElementById('qa-type').textContent   = p.type;
+  document.getElementById('qa-cap').textContent    = p.cap;
+  document.getElementById('qa-cap-py').textContent = p.capPy;
+  document.getElementById('q-answer-card').classList.add('show');
+  // 答え表示後はラベルも地図に追加
+  _drawQuizDot(p, true);
+}
+
+function judgeAnswer(correct) {
+  const id = quizQueue[quizIdx];
+  if (correct) {
+    qCorrect++;
+    // wrongSetの回数を減らす（0になれば削除）
+    if (wrongSet[id]) { wrongSet[id]--; if (!wrongSet[id]) delete wrongSet[id]; }
+  } else {
+    qWrong++;
+    wrongSet[id] = (wrongSet[id] || 0) + 1;
+    // 間違い回数に応じてキュー末尾に追加（最大4回）
+    const add = Math.min(wrongSet[id] + 2, 4);
+    for (let i = 0; i < add; i++) quizQueue.push(id);
+  }
+  quizIdx++;
+  _nextQuestion();
+}
+
+function _showFinish() {
+  document.getElementById('quiz-finish').classList.add('show');
+  document.getElementById('quiz-nav').style.display = 'none';
+  document.getElementById('q-reveal-btn').style.display = 'none';
+  document.getElementById('q-answer-card').classList.remove('show');
+  document.getElementById('q-progress-bar').style.width = '100%';
+  document.getElementById('q-progress-text').textContent = '完了！';
+  document.getElementById('qf-correct').textContent = qCorrect;
+  document.getElementById('qf-wrong').textContent   = qWrong;
+  qMapOvl.innerHTML = '';
+  const wc = Object.keys(wrongSet).length;
+  if (wc === 0) {
+    document.getElementById('qf-icon').textContent  = '🎉';
+    document.getElementById('qf-title').textContent = '完璧！';
+    document.getElementById('qf-sub').textContent   = `全問正解！素晴らしい！`;
+    document.getElementById('qf-retry-wrong').style.display = 'none';
+  } else {
+    document.getElementById('qf-icon').textContent  = '📚';
+    document.getElementById('qf-title').textContent = 'ラウンド終了';
+    document.getElementById('qf-sub').textContent   = `まだ ${wc} 省が苦手です。\n「間違いのみ再挑戦」でもう一度！`;
+    const btn = document.getElementById('qf-retry-wrong');
+    btn.style.display = 'flex';
+    btn.textContent   = `✗ 間違い ${wc} 省を再挑戦`;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// PWA
+// ══════════════════════════════════════════════════════
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); deferredPrompt = e;
   if (!localStorage.getItem('install-dismissed'))
@@ -489,7 +638,7 @@ window.addEventListener('beforeinstallprompt', e => {
 function doInstall() {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissInstall(); });
+  deferredPrompt.userChoice.then(() => { deferredPrompt=null; dismissInstall(); });
 }
 function dismissInstall() {
   document.getElementById('install-bar').classList.remove('show');
